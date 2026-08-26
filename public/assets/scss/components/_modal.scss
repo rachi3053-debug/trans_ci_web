@@ -1,0 +1,97 @@
+//
+// modal.scss
+//
+
+// Title text within header
+.modal-title {
+    color: inherit;
+}
+
+// Modal full width
+.modal-full-width {
+    width: 95%;
+    max-width: none;
+}
+
+// Modal Positions
+.modal-top {
+    margin: 0 auto;
+}
+
+.modal {
+    &.show {
+
+        .modal-right,
+        .modal-left {
+            transform: translate(0, 0) !important;
+        }
+    }
+}
+
+// Bottom modal
+.modal-bottom {
+    display: flex;
+    flex-flow: column nowrap;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+    height: 100%;
+    margin: 0 auto;
+    align-content: center;
+}
+
+// Full filled modals
+.modal-filled {
+    color: $white;
+
+    .modal-header {
+        background-color: rgba($white, 0.1);
+    }
+
+    .modal-title {
+        color: $white;
+    }
+
+    .modal-header,
+    .modal-footer {
+        border: none;
+    }
+}
+
+.modal-backdrop {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+// Global modal shadow styling
+.modal-content {
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+    border: none;
+    border-radius: 0.5rem;
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+    .modal-title {
+        font-weight: 600;
+        color: #343a40;
+    }
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+// Fix aria-hidden accessibility issue
+.modal.show {
+    .modal-dialog {
+        &[aria-modal="true"] {
+            pointer-events: auto;
+        }
+    }
+}
+
+// Ensure modal backdrop doesn't have focus issues
+.modal-backdrop {
+    pointer-events: auto;
+}

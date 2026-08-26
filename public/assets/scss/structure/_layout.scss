@@ -1,0 +1,149 @@
+//
+// _layout.scss
+//
+
+// Wrapper
+.wrapper {
+    height: 100%;
+    width: 100%;
+}
+
+// Content Page
+.page-content {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin-left: $sidenav-width;
+    transition: $transition-base;
+    min-height: calc(100vh - $topbar-height - 5px);
+    padding: 0 calc($grid-gutter-width * 0.5);
+}
+
+// Logo Height
+.logo-lg {
+    img {
+        height: $logo-lg-height;
+    }
+}
+
+.logo-sm {
+    img {
+        height: $logo-sm-height;
+    }
+}
+
+// Sidebar Logo
+.logo {
+    display: flex;
+    top: 0;
+    position: sticky;
+    height: $topbar-height;
+    padding: 0 22px;
+    transition: $transition-base;
+    align-items: center;
+
+    .logo-lg {
+        display: flex;
+    }
+
+    .logo-sm {
+        display: none;
+    }
+
+    .logo-light {
+        display: none;
+    }
+
+    .logo-dark {
+        display: flex;
+    }
+}
+
+// Sidebar Bottom Help-box
+.help-box {
+    border-radius: 5px;
+    padding: 20px;
+    margin: 65px 25px 25px;
+    position: relative;
+    background-color: rgba(var(--#{$prefix}light-rgb), 0.5);
+    color: $menu-item-color;
+}
+
+html[data-bs-theme="dark"] {
+    .logo {
+        .logo-light {
+            display: block;
+        }
+
+        .logo-dark {
+            display: none;
+        }
+    }
+}
+
+// Sidenav Logo
+html[data-menu-color="brand"],
+html[data-menu-color="dark"] {
+
+    .sidenav-menu {
+        .logo {
+            .logo-light {
+                display: block;
+            }
+
+            .logo-dark {
+                display: none;
+            }
+        }
+
+        .help-box {
+            color: $white;
+            background-color: rgba(var(--#{$prefix}light-rgb), 0.07);
+        }
+    }
+}
+
+
+// Topbar Logo
+html[data-topbar-color="brand"],
+html[data-topbar-color="dark"] {
+    .app-topbar {
+        .logo {
+            .logo-light {
+                display: block;
+            }
+
+            .logo-dark {
+                display: none;
+            }
+        }
+    }
+}
+
+html[data-topbar-color="brand"],
+html[data-topbar-color="dark"][data-bs-theme="light"] {
+
+    .page-content {
+        padding-top: calc($spacer * 0.75);
+    }
+}
+
+// Page Title
+.page-title-head {
+    height: var(--#{$prefix}topbar-height);
+}
+
+.color-line {
+    height: 5px;
+    background: #f7f9fa;
+    // background-image: linear-gradient(to right, $primary, $secondary 20%, #8e44ad 20%, #8e44ad 30%, #2980b9 30%, #2980b9 40%, #27ae60 40%, #27ae60 50%, #f39c12 50%, #f39c12 60%, #d35400 60%, #d35400 70%, $purple 70%, $purple 80%, $pink 80%, $info 100%);
+    background-image: linear-gradient(to right, #28a745, #28a745 100%);
+    background-size: 100% 6px;
+    background-position: 50% 100%;
+    background-repeat: no-repeat;
+    position: sticky;
+    top: 0;
+    z-index: 1100;
+    left: 0;
+    right: 0;
+}

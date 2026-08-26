@@ -1,0 +1,15 @@
+.secondary-submenu-bar {
+    width: 240px;
+    /* Adjust as needed */
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-right: 1px solid #dee2e6;
+    height: calc(100vh - 85px);
+    /* Adjust based on topbar height */
+    overflow-y: auto;
+}
+
+.secondary-content-area {
+    flex-grow: 1;
+    padding: 15px;
+}

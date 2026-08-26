@@ -1,0 +1,33 @@
+// Align ngx-toastr with Highdmin semantic colors:
+// success = green, info = cyan, warning = yellow, error = danger red
+#toast-container {
+    .ngx-toastr {
+        box-shadow: var(--#{$prefix}box-shadow);
+        border-radius: $border-radius;
+        opacity: 1;
+        width: 340px;
+    }
+
+    .toast-success {
+        background-color: var(--#{$prefix}success) !important;
+    }
+
+    .toast-info {
+        background-color: var(--#{$prefix}info) !important;
+    }
+
+    .toast-warning {
+        background-color: var(--#{$prefix}warning) !important;
+        color: #313a46;
+
+        .toast-title,
+        .toast-message,
+        .toast-close-button {
+            color: #313a46;
+        }
+    }
+
+    .toast-error {
+        background-color: var(--#{$prefix}danger) !important;
+    }
+}
