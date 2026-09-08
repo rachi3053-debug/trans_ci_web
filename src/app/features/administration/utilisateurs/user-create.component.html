@@ -1,0 +1,117 @@
+<app-page-header title="Nouvel utilisateur" subtitle="Créer un nouveau compte utilisateur" backLink="/administration/utilisateurs" />
+
+<div class="card">
+  <div class="card-body">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="mb-4 pb-3 border-bottom">
+        <h5 class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-person text-success"></i> Informations personnelles
+        </h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="nom">Nom</label>
+            <input id="nom" class="form-control" formControlName="nom" [class.is-invalid]="form.controls.nom.invalid && form.controls.nom.touched" />
+            @if (form.controls.nom.hasError('required') && form.controls.nom.touched) {
+              <div class="invalid-feedback d-block">Le nom est requis</div>
+            }
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="prenom">Prénom</label>
+            <input id="prenom" class="form-control" formControlName="prenom" [class.is-invalid]="form.controls.prenom.invalid && form.controls.prenom.touched" />
+            @if (form.controls.prenom.hasError('required') && form.controls.prenom.touched) {
+              <div class="invalid-feedback d-block">Le prénom est requis</div>
+            }
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="email">Email</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+              <input id="email" class="form-control" formControlName="email" type="email" [class.is-invalid]="form.controls.email.invalid && form.controls.email.touched" />
+            </div>
+            @if (form.controls.email.hasError('required') && form.controls.email.touched) {
+              <div class="invalid-feedback d-block">L'email est requis</div>
+            }
+            @if (form.controls.email.hasError('email') && form.controls.email.touched) {
+              <div class="invalid-feedback d-block">Format email invalide</div>
+            }
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="telephone">Téléphone</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+              <input id="telephone" class="form-control" formControlName="telephone" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4 pb-3 border-bottom">
+        <h5 class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-lock text-success"></i> Sécurité
+        </h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="password">Mot de passe</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-lock"></i></span>
+              <input id="password" class="form-control" formControlName="password" [type]="hidePassword() ? 'password' : 'text'" [class.is-invalid]="form.controls.password.invalid && form.controls.password.touched" />
+              <button class="btn btn-outline-secondary" type="button" (click)="hidePassword.set(!hidePassword())" aria-label="Afficher ou masquer le mot de passe">
+                <i [class]="hidePassword() ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+              </button>
+            </div>
+            @if (form.controls.password.hasError('required') && form.controls.password.touched) {
+              <div class="invalid-feedback d-block">Le mot de passe est requis</div>
+            }
+            @if (form.controls.password.hasError('minlength') && form.controls.password.touched) {
+              <div class="invalid-feedback d-block">8 caractères minimum</div>
+            }
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="confirmPassword">Confirmer le mot de passe</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-lock"></i></span>
+              <input id="confirmPassword" class="form-control" formControlName="confirmPassword" [type]="hidePassword() ? 'password' : 'text'" [class.is-invalid]="form.controls.confirmPassword.invalid && form.controls.confirmPassword.touched" />
+            </div>
+            @if (form.controls.confirmPassword.hasError('required') && form.controls.confirmPassword.touched) {
+              <div class="invalid-feedback d-block">La confirmation est requise</div>
+            }
+            @if (form.controls.confirmPassword.hasError('passwordMismatch') && form.controls.confirmPassword.touched) {
+              <div class="invalid-feedback d-block">Les mots de passe ne correspondent pas</div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <h5 class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-shield-person text-success"></i> Accès
+        </h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="roleCode">Rôle</label>
+            <select id="roleCode" class="form-select" formControlName="roleCode" [class.is-invalid]="form.controls.roleCode.invalid && form.controls.roleCode.touched">
+              <option value="" disabled>Sélectionner un rôle</option>
+              @for (role of roles(); track role.id) {
+                <option [value]="role.code">{{ role.libelle }}</option>
+              }
+            </select>
+            @if (form.controls.roleCode.hasError('required') && form.controls.roleCode.touched) {
+              <div class="invalid-feedback d-block">Le rôle est requis</div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+        <button type="button" class="btn btn-light" routerLink="/administration/utilisateurs">Annuler</button>
+        <button type="submit" class="btn btn-primary" [disabled]="form.invalid || submitting()">
+          @if (submitting()) {
+            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+          } @else {
+            <i class="bi bi-plus-lg me-1"></i> Créer l'utilisateur
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

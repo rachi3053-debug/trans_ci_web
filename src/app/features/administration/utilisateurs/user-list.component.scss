@@ -1,0 +1,20 @@
+.search-field {
+  min-width: 220px;
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+
+  i {
+    font-size: 0.85rem;
+    margin-left: 0.25rem;
+    color: var(--appd-muted);
+  }
+}
+
+.email-cell {
+  color: var(--appd-muted);
+  font-size: 0.85rem;
+}

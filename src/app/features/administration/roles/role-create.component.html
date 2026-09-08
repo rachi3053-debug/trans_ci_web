@@ -1,0 +1,108 @@
+<app-page-header title="Nouveau rôle" subtitle="Créer un rôle et assigner des permissions" backLink="/administration/roles" />
+
+<div class="card form-card">
+  <div class="card-body">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="form-section">
+        <h3><i class="bi bi-info-circle"></i> Informations du rôle</h3>
+        <div class="form-grid">
+          <div class="mb-3">
+            <label for="code" class="form-label">Code</label>
+            <input
+              id="code"
+              type="text"
+              class="form-control"
+              formControlName="code"
+              placeholder="EX: ADMIN"
+              [class.is-invalid]="form.controls.code.touched && form.controls.code.invalid"
+            />
+            @if (form.controls.code.hasError('required') && form.controls.code.touched) {
+              <div class="invalid-feedback d-block">Le code est requis</div>
+            }
+          </div>
+          <div class="mb-3">
+            <label for="libelle" class="form-label">Libellé</label>
+            <input
+              id="libelle"
+              type="text"
+              class="form-control"
+              formControlName="libelle"
+              placeholder="Administrateur"
+              [class.is-invalid]="form.controls.libelle.touched && form.controls.libelle.invalid"
+            />
+            @if (form.controls.libelle.hasError('required') && form.controls.libelle.touched) {
+              <div class="invalid-feedback d-block">Le libellé est requis</div>
+            }
+          </div>
+          <div class="mb-3 full-width">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" class="form-control" formControlName="description" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="section-header">
+          <h3><i class="bi bi-lock"></i> Permissions du rôle</h3>
+          <span class="perm-count">{{ selectedCount() }} / {{ allPermissions().length }}</span>
+        </div>
+
+        <div class="perm-actions">
+          <button type="button" class="btn btn-outline-primary btn-sm" (click)="selectAll()">Tout sélectionner</button>
+          <button type="button" class="btn btn-outline-secondary btn-sm" (click)="deselectAll()">Tout désélectionner</button>
+        </div>
+
+        <div class="accordion modules-accordion">
+          @for (mod of modules(); track mod) {
+            <div class="accordion-item module-panel">
+              <h2 class="accordion-header">
+                <button
+                  type="button"
+                  class="accordion-button"
+                  [class.collapsed]="!isModuleExpanded(mod)"
+                  (click)="toggleModule(mod)"
+                >
+                  <i class="bi bi-folder me-2"></i>
+                  {{ mod }}
+                  <span class="module-count ms-auto">{{ getModuleSelectedCount(mod) }}/{{ getModulePermissions(mod).length }}</span>
+                </button>
+              </h2>
+              <div class="accordion-collapse" [class.show]="isModuleExpanded(mod)">
+                <div class="accordion-body">
+                  <div class="permissions-grid">
+                    @for (perm of getModulePermissions(mod); track perm.id) {
+                      <div class="form-check">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          [id]="'perm-' + perm.id"
+                          [checked]="selectedIds().has(perm.id)"
+                          (change)="togglePermission(perm.id)"
+                        />
+                        <label class="form-check-label" [for]="'perm-' + perm.id">
+                          <span class="perm-label">{{ perm.libelle }}</span>
+                          <span class="perm-action">{{ perm.action }}</span>
+                        </label>
+                      </div>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-annuler" routerLink="/administration/roles">Annuler</button>
+        <button type="submit" class="btn btn-primary" [disabled]="form.invalid || submitting()">
+          @if (submitting()) {
+            <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          } @else {
+            <i class="bi bi-check-lg me-1"></i> Créer le rôle
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

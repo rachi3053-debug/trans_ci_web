@@ -1,0 +1,67 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="standard-modalLabel">{{titre}}</h4>
+  <button
+    type="button"
+    class="btn-close"
+    (click)="closeModal(false)"
+    aria-label="Close"
+  ></button>
+</div>
+<div class="modal-body">
+  <div class="d-flex justify-content-center gap-2">
+    <div class="icon-confirmation me-2 d-flex align-items-center justify-content-center">
+     !
+    </div>
+  </div>
+  <div class="d-print-none mb-2">
+    <div class="d-flex justify-content-center gap-2 text-center px-2">
+      <h4 class="mb-0">{{text}}</h4>
+    </div>
+  </div>
+  @if (generatedPassword) {
+    <div class="px-2 pb-2">
+      <p class="text-warning small text-center mb-2 mb-md-3">
+        Copiez ce mot de passe maintenant (bouton « Copier » ou sélection manuelle) avant de cliquer sur « Oui » : il ne sera plus affiché après validation.
+      </p>
+      <div class="input-group input-group-sm">
+        <input
+          type="text"
+          class="form-control font-monospace user-select-all"
+          readonly
+          [value]="generatedPassword"
+          aria-label="Nouveau mot de passe généré"
+        />
+        <button type="button" class="btn btn-outline-secondary" (click)="copyPassword()">
+          {{ copied ? 'Copié !' : 'Copier' }}
+        </button>
+      </div>
+    </div>
+  }
+  @if (askReason) {
+    <div class="px-2 pb-2">
+      <label class="form-label small text-muted">{{ reasonLabel }}</label>
+      <textarea
+        class="form-control"
+        rows="3"
+        [(ngModel)]="reason"
+        [placeholder]="reasonPlaceholder"
+      ></textarea>
+      @if (reasonRequired && !reason.trim()) {
+        <small class="text-danger">La raison est obligatoire.</small>
+      }
+    </div>
+  }
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-light"
+    (click)="closeModal(false)">
+      Non
+    </button>
+  <button type="button" class="btn btn-primary"
+          (click)="closeModal(true)">
+    Oui
+  </button>
+</div>
+

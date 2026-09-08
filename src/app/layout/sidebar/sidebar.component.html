@@ -1,0 +1,85 @@
+<div class="sidenav-menu">
+  <app-logo-box />
+
+  <button class="button-sm-hover" (click)="changeSidebarSize()" type="button" aria-label="Réduire le menu">
+    <i class="bi bi-circle align-middle"></i>
+  </button>
+
+  <div class="menuitem-list">
+    <div class="bg-overlay"></div>
+
+    <div class="d-flex flex-column h-100">
+      <div class="sidenav-user d-inline-flex align-items-center gap-2 px-2 py-3">
+        <span
+          class="profile-initials"
+        >
+          {{ getInitials() }}
+        </span>
+        <div class="flex-1 d-flex flex-column text-start lh-sm">
+          <span class="text-truncate fs-14 fw-medium">{{ getDisplayName() }}</span>
+          <small class="text-muted text-truncate">{{ user()?.email }}</small>
+        </div>
+      </div>
+
+      <div class="menu-flex">
+        <ngx-simplebar class="sidebar-scroll">
+          <ul class="side-nav" id="side-nav">
+            @for (menu of menuItems; track menu.key) {
+              @if (menu.isTitle) {
+                <li class="side-nav-item">
+                  <div class="side-nav-title">{{ menu.label }}</div>
+                </li>
+              } @else if (menu.children && menu.children.length > 0) {
+                <li class="side-nav-item side-menuitem" [class.active]="activeMenuItems.includes(menu.key!)">
+                  <a
+                    href="javascript: void(0);"
+                    class="side-nav-link"
+                    [class.menu-is-open]="!menu.collapsed"
+                    (click)="toggleMenuItem(menu, collapse)"
+                  >
+                    <i [class]="menu.icon"></i>
+                    <span>{{ menu.label }}</span>
+                    <span class="menu-arrow"><i class="bi bi-chevron-right"></i></span>
+                  </a>
+                  <div #collapse="ngbCollapse" [ngbCollapse]="menu.collapsed !== false">
+                    <ul class="sub-menu" aria-expanded="false">
+                      @for (child of menu.children; track child.key) {
+                        <li class="side-nav-item">
+                          <a
+                            routerLink="{{ child.url }}"
+                            class="side-nav-link sub"
+                            [class.active]="activeMenuItems.includes(child.key!)"
+                          >
+                            <span>{{ child.label }}</span>
+                          </a>
+                        </li>
+                      }
+                    </ul>
+                  </div>
+                </li>
+              } @else {
+                <li class="side-nav-item side-menuitem" [class.active]="activeMenuItems.includes(menu.key!)">
+                  <a routerLink="{{ menu.url }}" class="side-nav-link">
+                    <i [class]="menu.icon"></i>
+                    <span>{{ menu.label }}</span>
+                  </a>
+                </li>
+              }
+            }
+          </ul>
+        </ngx-simplebar>
+      </div>
+
+      <div class="sidenav-footer py-3 px-2">
+        <button
+          class="btn btn-sm btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2"
+          (click)="logout()"
+          type="button"
+        >
+          <i class="bi bi-box-arrow-right"></i>
+          Déconnexion
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

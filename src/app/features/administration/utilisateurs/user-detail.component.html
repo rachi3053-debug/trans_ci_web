@@ -1,0 +1,108 @@
+<app-page-header
+  [title]="user() ? user()!.prenom + ' ' + user()!.nom : 'Utilisateur'"
+  [subtitle]="user()?.email ?? ''"
+  backLink="/administration/utilisateurs"
+>
+  @if (auth.hasPermission('USER:UPDATE')) {
+    <button class="btn btn-outline-secondary" type="button" (click)="editing.set(!editing())">
+      <i [class]="editing() ? 'bi bi-eye' : 'bi bi-pencil'"></i>
+      {{ editing() ? 'Annuler' : 'Modifier' }}
+    </button>
+  }
+  @if (auth.hasPermission('USER:DELETE')) {
+    <button class="btn btn-outline-danger" type="button" (click)="confirmDelete()">
+      <i class="bi bi-trash me-1"></i> Supprimer
+    </button>
+  }
+</app-page-header>
+
+@if (loading()) {
+  <div class="text-center py-5 text-muted">
+    <div class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></div>
+    Chargement...
+  </div>
+} @else if (user()) {
+  <div class="row g-3">
+    <div class="col-xl-6">
+      <div class="card h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="avatar-lg bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center">
+              <i class="bi bi-person fs-2"></i>
+            </div>
+            <div>
+              <h5 class="mb-0">{{ user()!.prenom }} {{ user()!.nom }}</h5>
+              <small class="text-muted">{{ user()!.email }}</small>
+            </div>
+          </div>
+          <div class="row g-3">
+            <div class="col-6">
+              <div class="small text-muted mb-1">Téléphone</div>
+              <div class="fw-medium">{{ user()!.telephone || '—' }}</div>
+            </div>
+            <div class="col-6">
+              <div class="small text-muted mb-1">Statut</div>
+              <span class="badge" [class.text-bg-success]="user()!.actif" [class.text-bg-danger]="!user()!.actif">
+                {{ user()!.actif ? 'Actif' : 'Inactif' }}
+              </span>
+            </div>
+            <div class="col-6">
+              <div class="small text-muted mb-1">Email vérifié</div>
+              <div class="fw-medium">{{ user()!.emailVerified ? 'Oui' : 'Non' }}</div>
+            </div>
+            <div class="col-6">
+              <div class="small text-muted mb-1">Dernière connexion</div>
+              <div class="fw-medium">{{ user()!.lastLoginAt ? (user()!.lastLoginAt | date:'dd/MM/yyyy HH:mm') : '—' }}</div>
+            </div>
+            <div class="col-6">
+              <div class="small text-muted mb-1">Créé le</div>
+              <div class="fw-medium">{{ user()!.createdAt | date:'dd/MM/yyyy' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    @if (editing()) {
+      <div class="col-xl-6">
+        <div class="card h-100">
+          <div class="card-header">
+            <h5 class="mb-0">Modifier l'utilisateur</h5>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="editForm" (ngSubmit)="onSave()">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label" for="edit-nom">Nom</label>
+                  <input id="edit-nom" class="form-control" formControlName="nom" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="edit-prenom">Prénom</label>
+                  <input id="edit-prenom" class="form-control" formControlName="prenom" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="edit-email">Email</label>
+                  <input id="edit-email" class="form-control" formControlName="email" type="email" />
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label" for="edit-telephone">Téléphone</label>
+                  <input id="edit-telephone" class="form-control" formControlName="telephone" />
+                </div>
+              </div>
+              <div class="d-flex justify-content-end gap-2 mt-3">
+                <button type="button" class="btn btn-light" (click)="editing.set(false)">Annuler</button>
+                <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid || saving()">
+                  @if (saving()) {
+                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                  } @else {
+                    <span>Sauvegarder</span>
+                  }
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+}

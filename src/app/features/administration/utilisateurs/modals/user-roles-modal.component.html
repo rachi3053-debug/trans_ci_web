@@ -1,0 +1,37 @@
+<div class="modal-header">
+  <h4 class="modal-title">Attribuer des rôles</h4>
+  <button type="button" class="btn-close" aria-label="Fermer" (click)="onCancel()"></button>
+</div>
+<div class="modal-body">
+  <p class="text-muted small">Rôles de {{ data.userName }}</p>
+  @if (loading()) {
+    <div class="text-center py-4">
+      <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
+    </div>
+  } @else {
+    <div class="d-flex flex-column gap-2">
+      @for (role of roles(); track role.id) {
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            [id]="'role-' + role.id"
+            [checked]="selectedCodes().includes(role.code)"
+            (change)="onToggleRole(role.code, $event)"
+          />
+          <label class="form-check-label" [for]="'role-' + role.id">{{ role.libelle }}</label>
+        </div>
+      }
+    </div>
+  }
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-light" (click)="onCancel()">Annuler</button>
+  <button type="button" class="btn btn-primary" [disabled]="loading() || submitting()" (click)="onSave()">
+    @if (submitting()) {
+      <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+    } @else {
+      <span>Enregistrer</span>
+    }
+  </button>
+</div>

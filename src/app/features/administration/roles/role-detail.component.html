@@ -1,0 +1,93 @@
+<app-page-header
+  [title]="role() ? role()!.libelle : 'Rôle'"
+  [subtitle]="role()!.code"
+  backLink="/administration/roles"
+>
+  @if (auth.hasPermission('ROLE:UPDATE')) {
+    <a class="btn btn-outline-primary" [routerLink]="['/administration/roles', role()!.id, 'modifier']">
+      <i class="bi bi-pencil me-1"></i> Modifier
+    </a>
+  }
+</app-page-header>
+
+@if (loading()) {
+  <div class="loading-state">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+    <p>Chargement...</p>
+  </div>
+} @else if (role()) {
+  <div class="detail-grid">
+    <div class="card detail-card">
+      <div class="card-body">
+        <div class="d-flex align-items-center gap-3 mb-3">
+          <div class="role-icon">
+            <i class="bi bi-person-gear"></i>
+          </div>
+          <div>
+            <h5 class="card-title mb-0">{{ role()!.libelle }}</h5>
+            <small class="text-muted">{{ role()!.description || 'Aucune description' }}</small>
+          </div>
+        </div>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Code</span>
+            <span class="info-value code">{{ role()!.code }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Statut</span>
+            <span class="badge" [class.active]="role()!.actif" [class.inactive]="!role()!.actif">
+              {{ role()!.actif ? 'Actif' : 'Inactif' }}
+            </span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Permissions</span>
+            <span class="info-value">{{ permissions().length }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card detail-card">
+      <div class="card-header">
+        <h5 class="card-title mb-0">Permissions assignées</h5>
+      </div>
+      <div class="card-body">
+        @if (permissions().length === 0) {
+          <div class="empty-state">
+            <i class="bi bi-unlock"></i>
+            <p>Aucune permission assignée</p>
+          </div>
+        } @else {
+          <div class="accordion modules-accordion">
+            @for (mod of moduleNames(); track mod) {
+              <div class="accordion-item module-panel">
+                <h2 class="accordion-header">
+                  <button
+                    type="button"
+                    class="accordion-button"
+                    [class.collapsed]="!isModuleExpanded(mod)"
+                    (click)="toggleModule(mod)"
+                  >
+                    <i class="bi bi-folder me-2"></i>
+                    {{ mod }}
+                  </button>
+                </h2>
+                <div class="accordion-collapse" [class.show]="isModuleExpanded(mod)">
+                  <div class="accordion-body">
+                    <div class="perm-list">
+                      @for (perm of getModulePerms(mod); track perm.id) {
+                        <span class="perm-chip">{{ perm.libelle }}</span>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

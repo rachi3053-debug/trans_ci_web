@@ -1,0 +1,35 @@
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  color: var(--appd-muted);
+}
+.modules {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-height: 55vh;
+  overflow: auto;
+  padding: 0.5rem 0;
+}
+.module {
+  border: 1px solid var(--appd-border);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+.module-header {
+  margin-bottom: 0.5rem;
+}
+.perms {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.25rem 1rem;
+}
+.code {
+  font-family: monospace;
+  font-size: 0.7rem;
+  color: var(--appd-muted);
+  margin-left: 0.35rem;
+}

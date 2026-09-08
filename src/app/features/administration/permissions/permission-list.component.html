@@ -1,0 +1,121 @@
+<div class="card">
+  <div class="card-header">
+    <h5 class="card-title mb-0">Permissions</h5>
+  </div>
+  <div class="card-body">
+    <div class="d-flex flex-wrap gap-2 mb-3">
+      <div class="position-relative flex-grow-1 search-field">
+        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+        <input
+          class="form-control ps-5"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilter()"
+          placeholder="Rechercher par code ou libellé..."
+          aria-label="Rechercher une permission"
+        />
+      </div>
+      <select class="form-select w-auto" [(ngModel)]="filterModule" (ngModelChange)="applyFilter()" aria-label="Filtrer par module">
+        <option value="">Tous les modules</option>
+        @for (mod of allModules(); track mod) {
+          <option [value]="mod">{{ mod }}</option>
+        }
+      </select>
+      <select class="form-select w-auto" [(ngModel)]="filterAction" (ngModelChange)="applyFilter()" aria-label="Filtrer par action">
+        <option value="">Toutes les actions</option>
+        <option value="READ">Lecture</option>
+        <option value="CREATE">Création</option>
+        <option value="UPDATE">Modification</option>
+        <option value="DELETE">Suppression</option>
+        <option value="VALIDATE">Validation</option>
+        <option value="EXPORT">Export</option>
+      </select>
+    </div>
+
+    @if (loading()) {
+      <div class="text-center py-5 text-muted">
+        <div class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></div>
+        Chargement des permissions...
+      </div>
+    } @else if (filteredPermissions().length === 0) {
+      <app-ui-empty-state
+        icon="bi-shield-lock"
+        title="Aucune permission trouvée"
+        message="Aucune permission ne correspond à vos critères de recherche."
+      ></app-ui-empty-state>
+    } @else {
+      <div class="table-responsive">
+        <table class="table align-middle table-hover mb-0">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Libellé</th>
+              <th>Module</th>
+              <th>Action</th>
+              <th>Statut</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (perm of paginatedPermissions(); track perm.id) {
+              <tr>
+                <td><code class="perm-code">{{ perm.code }}</code></td>
+                <td>{{ perm.libelle }}</td>
+                <td>{{ perm.module }}</td>
+                <td>
+                  <span class="badge action-badge" [attr.data-action]="perm.action">
+                    {{ getActionLabel(perm.action) }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge" [class.text-bg-success]="perm.actif" [class.text-bg-danger]="!perm.actif">
+                    {{ perm.actif ? 'Actif' : 'Inactif' }}
+                  </span>
+                </td>
+                <td class="text-end">
+                  <div ngbDropdown class="dropdown d-inline-block">
+                    <button class="btn btn-icon btn-outline-secondary" type="button" ngbDropdownToggle [attr.aria-label]="'Actions pour ' + perm.code">
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end">
+                      @if (auth.hasPermission('PERMISSION:UPDATE')) {
+                        <button class="dropdown-item" type="button" (click)="openEdit(perm)">
+                          <i class="bi bi-pencil me-2"></i> Modifier
+                        </button>
+                      }
+                      @if (auth.hasPermission('PERMISSION:DELETE')) {
+                        <hr class="dropdown-divider" />
+                        <button class="dropdown-item text-danger" type="button" (click)="confirmDelete(perm)">
+                          <i class="bi bi-trash me-2"></i> Supprimer
+                        </button>
+                      }
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-muted small">{{ paginationInfo() }}</span>
+          <select class="form-select form-select-sm w-auto" [ngModel]="pageSize()" (ngModelChange)="onPageSizeChange($event)" aria-label="Taille de page">
+            <option [ngValue]="10">10 / page</option>
+            <option [ngValue]="25">25 / page</option>
+            <option [ngValue]="50">50 / page</option>
+          </select>
+        </div>
+        <ngb-pagination
+          [collectionSize]="filteredPermissions().length"
+          [page]="pageIndex() + 1"
+          [pageSize]="pageSize()"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="onPageChange($event)"
+        />
+      </div>
+    }
+  </div>
+</div>

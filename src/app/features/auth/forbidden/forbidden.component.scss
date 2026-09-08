@@ -1,0 +1,15 @@
+.forbidden-page {
+  background-color: var(--bs-body-bg, #f8f9fa);
+}
+
+.forbidden-card {
+  width: 100%;
+  max-width: 480px;
+  border-radius: 0.75rem;
+}
+
+.forbidden-icon {
+  font-size: 4rem;
+  color: var(--bs-danger, #dc3545);
+  margin-bottom: 1rem;
+}
