@@ -1,0 +1,32 @@
+<div class="page-header">
+  <div class="header-left">
+    @if (backLink) {
+      <a [routerLink]="backLink" class="back-link" aria-label="Retour">
+        <i class="bi bi-arrow-left"></i>
+      </a>
+    }
+    <div>
+      <h1 class="pixel-page-title">{{ title }}</h1>
+      @if (subtitle) {
+        <p class="pixel-page-subtitle">{{ subtitle }}</p>
+      } @else if (breadcrumbs.length) {
+        <nav aria-label="Fil d'Ariane">
+          <ol class="breadcrumb">
+            @for (crumb of breadcrumbs; track $index; let last = $last) {
+              <li class="breadcrumb-item" [class.active]="last && !crumb.url">
+                @if (crumb.url && !last) {
+                  <a [routerLink]="crumb.url">{{ crumb.label }}</a>
+                } @else {
+                  {{ crumb.label }}
+                }
+              </li>
+            }
+          </ol>
+        </nav>
+      }
+    </div>
+  </div>
+  <div class="header-actions">
+    <ng-content></ng-content>
+  </div>
+</div>

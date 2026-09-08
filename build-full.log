@@ -1,0 +1,347 @@
+
+> web@0.0.0 build
+> ng build
+
+[33mÔØ»[39m Building...
+[32mÔ£ö[39m Building...
+[1mInitial chunk files[22m  [2m | [22m[1mNames[22m                    [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mstyles-S4RF7CWN.css[39m  [2m | [22m[2mstyles[22m                   [2m | [22m[36m616.49 kB[39m[2m | [22m               [36m66.50 kB[39m
+[32mchunk-2JQNONJ2.js[39m    [2m | [22m[2m-[22m                        [2m | [22m[36m290.32 kB[39m[2m | [22m               [36m80.09 kB[39m
+[32mmain-OLCLKSY5.js[39m     [2m | [22m[2mmain[22m                     [2m | [22m[36m168.30 kB[39m[2m | [22m               [36m42.63 kB[39m
+[32mchunk-IYYUSP3A.js[39m    [2m | [22m[2m-[22m                        [2m | [22m [36m70.65 kB[39m[2m | [22m               [36m17.37 kB[39m
+[32mchunk-45VEGPS3.js[39m    [2m | [22m[2m-[22m                        [2m | [22m [36m40.95 kB[39m[2m | [22m                [36m8.53 kB[39m
+[32mpolyfills-5OWZN676.js[39m[2m | [22m[2mpolyfills[22m                [2m | [22m [36m35.09 kB[39m[2m | [22m               [36m11.52 kB[39m
+[32mchunk-XW4KPTLV.js[39m    [2m | [22m[2m-[22m                        [2m | [22m [36m24.16 kB[39m[2m | [22m                [36m5.31 kB[39m
+[32mchunk-FO7DA4VD.js[39m    [2m | [22m[2m-[22m                        [2m | [22m  [36m3.94 kB[39m[2m | [22m                [36m1.25 kB[39m
+[32mchunk-ZV6CS4NC.js[39m    [2m | [22m[2m-[22m                        [2m | [22m[36m222 bytes[39m[2m | [22m              [36m222 bytes[39m
+
+[1m [22m                    [2m | [22m[1mInitial total[22m            [2m | [22m  [1m1.25 MB[22m[2m | [22m              [1m233.42 kB[22m
+
+[1mLazy chunk files[22m     [2m | [22m[1mNames[22m                    [2m | [22m [1mRaw size[22m[2m | [22m[1mEstimated transfer size[22m
+[32mchunk-SOZBZYA5.js[39m    [2m | [22m[2muser-list-component[22m      [2m | [22m [36m25.46 kB[39m[2m | [22m                [36m6.19 kB[39m
+[32mchunk-E525UW7P.js[39m    [2m | [22m[2mrole-list-component[22m      [2m | [22m [36m17.52 kB[39m[2m | [22m                [36m4.59 kB[39m
+[32mchunk-ZP5BGENS.js[39m    [2m | [22m[2mpermission-list-component[22m[2m | [22m  [36m9.19 kB[39m[2m | [22m                [36m3.01 kB[39m
+[32mchunk-LOQXUPXU.js[39m    [2m | [22m[2mrole-create-component[22m    [2m | [22m  [36m8.68 kB[39m[2m | [22m                [36m2.74 kB[39m
+[32mchunk-G52K4LCZ.js[39m    [2m | [22m[2muser-create-component[22m    [2m | [22m  [36m7.64 kB[39m[2m | [22m                [36m2.36 kB[39m
+[32mchunk-BPGDUQ5E.js[39m    [2m | [22m[2muser-detail-component[22m    [2m | [22m  [36m6.81 kB[39m[2m | [22m                [36m2.37 kB[39m
+[32mchunk-HKOXKTPD.js[39m    [2m | [22m[2mrole-detail-component[22m    [2m | [22m  [36m6.40 kB[39m[2m | [22m                [36m2.17 kB[39m
+[32mchunk-OBKHFABL.js[39m    [2m | [22m[2mlogin-component[22m          [2m | [22m  [36m5.48 kB[39m[2m | [22m                [36m2.03 kB[39m
+[32mchunk-QIWMQQXA.js[39m    [2m | [22m[2m-[22m                        [2m | [22m  [36m4.83 kB[39m[2m | [22m                [36m1.83 kB[39m
+[32mchunk-JKGMSQQC.js[39m    [2m | [22m[2mdashboard-component[22m      [2m | [22m  [36m4.43 kB[39m[2m | [22m                [36m1.52 kB[39m
+[32mchunk-UKOWBNV7.js[39m    [2m | [22m[2m-[22m                        [2m | [22m  [36m1.84 kB[39m[2m | [22m              [36m764 bytes[39m
+[32mchunk-DUC3JNYZ.js[39m    [2m | [22m[2mforbidden-component[22m      [2m | [22m  [36m1.28 kB[39m[2m | [22m              [36m667 bytes[39m
+[32mchunk-HEHETKXE.js[39m    [2m | [22m[2m-[22m                        [2m | [22m[36m697 bytes[39m[2m | [22m              [36m697 bytes[39m
+[32mchunk-FQIKYDDA.js[39m    [2m | [22m[2m-[22m                        [2m | [22m[36m664 bytes[39m[2m | [22m              [36m664 bytes[39m
+[32mchunk-XYZ4EMSC.js[39m    [2m | [22m[2m-[22m                        [2m | [22m[36m528 bytes[39m[2m | [22m              [36m528 bytes[39m
+
+Application bundle generation complete. [18.060 seconds]
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    node_modules/bootstrap/scss/_functions.scss:11:29:
+      11 Ôöé     @if $prev-num == null or unit($num) == "%" or unit($prev-num) ...
+         ÔòÁ                              ^
+
+
+  Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+  Use math.unit instead.
+  
+  More info and automated migrator: https://sass-lang.com/d/import
+
+  The plugin "angular-sass" was triggered by this import
+
+    angular:styles/global:styles:1:8:
+      1 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    node_modules/bootstrap/scss/_functions.scss:11:50:
+      11 Ôöé ...$prev-num == null or unit($num) == "%" or unit($prev-num) == "%" {
+         ÔòÁ                                              ^
+
+
+  Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+  Use math.unit instead.
+  
+  More info and automated migrator: https://sass-lang.com/d/import
+
+  The plugin "angular-sass" was triggered by this import
+
+    angular:styles/global:styles:1:8:
+      1 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    node_modules/bootstrap/scss/_functions.scss:37:10:
+      37 Ôöé   @return red($value), green($value), blue($value);
+         ÔòÁ           ^
+
+
+  red() is deprecated. Suggestion:
+  
+  color.channel($color, "red", $space: rgb)
+  
+  More info: https://sass-lang.com/d/color-functions
+
+  The plugin "angular-sass" was triggered by this import
+
+    angular:styles/global:styles:1:8:
+      1 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    node_modules/bootstrap/scss/_functions.scss:37:23:
+      37 Ôöé   @return red($value), green($value), blue($value);
+         ÔòÁ                        ^
+
+
+  green() is deprecated. Suggestion:
+  
+  color.channel($color, "green", $space: rgb)
+  
+  More info: https://sass-lang.com/d/color-functions
+
+  The plugin "angular-sass" was triggered by this import
+
+    angular:styles/global:styles:1:8:
+      1 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    node_modules/bootstrap/scss/_functions.scss:185:9:
+      185 Ôöé     "r": red($color),
+          ÔòÁ          ^
+
+
+  red() is deprecated. Suggestion:
+  
+  color.channel($color, "red", $space: rgb)
+  
+  More info: https://sass-lang.com/d/color-functions
+
+  The plugin "angular-sass" was triggered by this import
+
+    angular:styles/global:styles:1:8:
+      1 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    node_modules/bootstrap/scss/_functions.scss:186:9:
+      186 Ôöé     "g": green($color),
+          ÔòÁ          ^
+
+
+  green() is deprecated. Suggestion:
+  
+  color.channel($color, "green", $space: rgb)
+  
+  More info: https://sass-lang.com/d/color-functions
+
+  The plugin "angular-sass" was triggered by this import
+
+    angular:styles/global:styles:1:8:
+      1 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    node_modules/bootstrap/scss/_functions.scss:187:9:
+      187 Ôöé     "b": blue($color)
+          ÔòÁ          ^
+
+
+  blue() is deprecated. Suggestion:
+  
+  color.channel($color, "blue", $space: rgb)
+  
+  More info: https://sass-lang.com/d/color-functions
+
+  The plugin "angular-sass" was triggered by this import
+
+    angular:styles/global:styles:1:8:
+      1 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    node_modules/bootstrap/scss/_functions.scss:207:10:
+      207 Ôöé   @return mix(white, $color, $weight);
+          ÔòÁ           ^
+
+
+  Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+  Use color.mix instead.
+  
+  More info and automated migrator: https://sass-lang.com/d/import
+
+  The plugin "angular-sass" was triggered by this import
+
+    angular:styles/global:styles:1:8:
+      1 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    node_modules/bootstrap/scss/_functions.scss:212:10:
+      212 Ôöé   @return mix(black, $color, $weight);
+          ÔòÁ           ^
+
+
+  Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+  Use color.mix instead.
+  
+  More info and automated migrator: https://sass-lang.com/d/import
+
+  The plugin "angular-sass" was triggered by this import
+
+    angular:styles/global:styles:1:8:
+      1 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    node_modules/bootstrap/scss/_variables.scss:342:26:
+      342 Ôöé $light-bg-subtle:         mix($gray-100, $white) !default;
+          ÔòÁ                           ^
+
+
+  Global built-in functions are deprecated and will be removed in Dart Sass 3.0.0.
+  Use color.mix instead.
+  
+  More info and automated migrator: https://sass-lang.com/d/import
+
+  The plugin "angular-sass" was triggered by this import
+
+    angular:styles/global:styles:1:8:
+      1 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    public/assets/scss/app.scss:11:8:
+      11 Ôöé @import "../../../node_modules/bootstrap/scss/functions";
+         ÔòÁ         ^
+
+
+  Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+  
+  More info and automated migrator: https://sass-lang.com/d/import
+
+  The plugin "angular-sass" was triggered by this import
+
+    angular:styles/global:styles:1:8:
+      1 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    public/assets/scss/app.scss:12:8:
+      12 Ôöé @import "../../../node_modules/bootstrap/scss/variables";
+         ÔòÁ         ^
+
+
+  Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+  
+  More info and automated migrator: https://sass-lang.com/d/import
+
+  The plugin "angular-sass" was triggered by this import
+
+    angular:styles/global:styles:1:8:
+      1 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    public/assets/scss/icons.scss:10:8:
+      10 Ôöé @import "icons/remixicon";
+         ÔòÁ         ^
+
+  Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+  
+  More info and automated migrator: https://sass-lang.com/d/import
+
+  The plugin "angular-sass" was triggered by this import
+
+    angular:styles/global:styles:1:8:
+      1 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    src/styles.scss:15:8:
+      15 Ôöé @import "../public/assets/scss/icons.scss";
+         ÔòÁ         ^
+
+
+  Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+  
+  More info and automated migrator: https://sass-lang.com/d/import
+
+  The plugin "angular-sass" was triggered by this import
+
+    angular:styles/global:styles:1:8:
+      1 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] Deprecation [plugin angular-sass]
+
+    src/styles.scss:16:8:
+      16 Ôöé @import "../public/assets/scss/app.scss";
+         ÔòÁ         ^
+
+
+  Sass @import rules are deprecated and will be removed in Dart Sass 3.0.0.
+  
+  More info and automated migrator: https://sass-lang.com/d/import
+
+  The plugin "angular-sass" was triggered by this import
+
+    angular:styles/global:styles:1:8:
+      1 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+
+Ôû▓ [WARNING] 337 repetitive deprecation warnings omitted.
+Run in verbose mode to see all warnings. [plugin angular-sass]
+
+    angular:styles/global:styles:1:8:
+      1 Ôöé @import 'src/styles.scss';
+        ÔòÁ         ~~~~~~~~~~~~~~~~~
+
+  null
+
+
+Ôû▓ [WARNING] Module 'localstorage-slim' used by 'src/app/partager/storage.service.ts' is not ESM
+
+  CommonJS or AMD dependencies can cause optimization bailouts.
+  For more information see: https://angular.dev/tools/cli/build#configuring-commonjs-dependencies
+
+
+Ôû▓ [WARNING] 4 rules skipped due to selector errors:
+  .form-floating>~label -> Did not expect successive traversals.
+  .btn-group>+.btn -> Did not expect successive traversals.
+  .btn-group>+.btn -> Did not expect successive traversals.
+  .btn-group-vertical>+.btn -> Did not expect successive traversals.
+
+
+Output location: C:\Users\Lenovo\transci-ci\apps\web\dist\web
+

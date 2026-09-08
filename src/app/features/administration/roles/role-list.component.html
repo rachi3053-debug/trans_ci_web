@@ -1,0 +1,107 @@
+<app-page-header title="Rôles" subtitle="Gestion des rôles et niveaux d'accès">
+  @if (auth.hasPermission('ROLE:CREATE')) {
+    <button type="button" class="btn btn-primary" (click)="openCreateRole()">
+      <i class="bi bi-plus-lg me-1"></i> Nouveau rôle
+    </button>
+  }
+</app-page-header>
+
+<div class="card table-card">
+  <div class="card-body">
+    <div class="table-toolbar">
+      <div class="input-group search-field">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilter()"
+          placeholder="Rechercher un rôle..."
+          aria-label="Rechercher un rôle"
+        />
+      </div>
+    </div>
+
+    @if (loading()) {
+      <div class="loading-state">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+        <p>Chargement des rôles...</p>
+      </div>
+    } @else if (filteredRoles().length === 0) {
+      <app-ui-empty-state
+        icon="bi-person-gear"
+        title="Aucun rôle trouvé"
+        message="Aucun rôle ne correspond à vos critères de recherche."
+      >
+        @if (auth.hasPermission('ROLE:CREATE')) {
+          <button type="button" class="btn btn-primary" (click)="openCreateRole()">
+            <i class="bi bi-plus-lg me-1"></i> Créer un rôle
+          </button>
+        }
+      </app-ui-empty-state>
+    } @else {
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Libellé</th>
+              <th>Description</th>
+              <th>Statut</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (r of filteredRoles(); track r.id) {
+              <tr>
+                <td><span class="role-code">{{ r.code }}</span></td>
+                <td>{{ r.libelle }}</td>
+                <td class="text-muted">{{ r.description || '—' }}</td>
+                <td>
+                  <span class="badge" [class.active]="r.actif" [class.inactive]="!r.actif">
+                    {{ r.actif ? 'Actif' : 'Inactif' }}
+                  </span>
+                </td>
+                <td class="text-end">
+                  <div ngbDropdown class="dropdown d-inline-block">
+                    <button
+                      type="button"
+                      class="btn btn-icon btn-outline-secondary"
+                      ngbDropdownToggle
+                      aria-label="Actions"
+                    >
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end">
+                      <a class="dropdown-item" [routerLink]="['/administration/roles', r.id]">
+                        <i class="bi bi-eye me-2"></i> Voir
+                      </a>
+                      @if (auth.hasPermission('ROLE:UPDATE')) {
+                        <button type="button" class="dropdown-item" (click)="openEditRole(r)">
+                          <i class="bi bi-pencil me-2"></i> Modifier
+                        </button>
+                      }
+                      @if (auth.hasPermission('ROLE:UPDATE')) {
+                        <button type="button" class="dropdown-item" (click)="openPermissions(r)">
+                          <i class="bi bi-list-check me-2"></i> Permissions
+                        </button>
+                      }
+                      @if (auth.hasPermission('ROLE:DELETE')) {
+                        <hr class="dropdown-divider" />
+                        <button type="button" class="dropdown-item text-danger" (click)="confirmDelete(r)">
+                          <i class="bi bi-trash me-2"></i> Supprimer
+                        </button>
+                      }
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

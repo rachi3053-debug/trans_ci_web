@@ -1,0 +1,85 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ data.mode === 'create' ? 'Nouvel utilisateur' : 'Modifier l'utilisateur' }}</h4>
+  <button type="button" class="btn-close" aria-label="Fermer" (click)="onCancel()"></button>
+</div>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="modal-body">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label" for="modal-nom">Nom</label>
+        <input id="modal-nom" class="form-control" formControlName="nom" [class.is-invalid]="form.controls.nom.invalid && form.controls.nom.touched" />
+        @if (form.controls.nom.hasError('required') && form.controls.nom.touched) {
+          <div class="invalid-feedback d-block">Le nom est requis</div>
+        }
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="modal-prenom">Prénom</label>
+        <input id="modal-prenom" class="form-control" formControlName="prenom" [class.is-invalid]="form.controls.prenom.invalid && form.controls.prenom.touched" />
+        @if (form.controls.prenom.hasError('required') && form.controls.prenom.touched) {
+          <div class="invalid-feedback d-block">Le prénom est requis</div>
+        }
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="modal-email">Email</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+          <input id="modal-email" class="form-control" formControlName="email" type="email" [class.is-invalid]="form.controls.email.invalid && form.controls.email.touched" />
+        </div>
+        @if (form.controls.email.hasError('required') && form.controls.email.touched) {
+          <div class="invalid-feedback d-block">L'email est requis</div>
+        }
+        @if (form.controls.email.hasError('email') && form.controls.email.touched) {
+          <div class="invalid-feedback d-block">Format email invalide</div>
+        }
+      </div>
+      <div class="col-md-6">
+        <label class="form-label" for="modal-telephone">Téléphone</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+          <input id="modal-telephone" class="form-control" formControlName="telephone" />
+        </div>
+      </div>
+
+      @if (data.mode === 'create') {
+        <div class="col-md-6">
+          <label class="form-label" for="modal-password">Mot de passe</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+            <input id="modal-password" class="form-control" formControlName="password" [type]="hidePassword() ? 'password' : 'text'" [class.is-invalid]="form.controls.password.invalid && form.controls.password.touched" />
+            <button class="btn btn-outline-secondary" type="button" (click)="hidePassword.set(!hidePassword())" aria-label="Afficher ou masquer le mot de passe">
+              <i [class]="hidePassword() ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
+            </button>
+          </div>
+          @if (form.controls.password.hasError('required') && form.controls.password.touched) {
+            <div class="invalid-feedback d-block">Le mot de passe est requis</div>
+          }
+          @if (form.controls.password.hasError('minlength') && form.controls.password.touched) {
+            <div class="invalid-feedback d-block">8 caractères minimum</div>
+          }
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="modal-roleCode">Rôle</label>
+          <select id="modal-roleCode" class="form-select" formControlName="roleCode" [class.is-invalid]="form.controls.roleCode.invalid && form.controls.roleCode.touched">
+            <option value="" disabled>Sélectionner un rôle</option>
+            @for (role of roles(); track role.id) {
+              <option [value]="role.code">{{ role.libelle }}</option>
+            }
+          </select>
+          @if (form.controls.roleCode.hasError('required') && form.controls.roleCode.touched) {
+            <div class="invalid-feedback d-block">Le rôle est requis</div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="onCancel()">Annuler</button>
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid || submitting()">
+      @if (submitting()) {
+        <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+      } @else {
+        <span>{{ data.mode === 'create' ? 'Créer' : 'Enregistrer' }}</span>
+      }
+    </button>
+  </div>
+</form>

@@ -1,0 +1,141 @@
+<app-page-header title="Utilisateurs" subtitle="Gestion des comptes utilisateurs">
+  @if (auth.hasPermission('USER:CREATE')) {
+    <button class="btn btn-primary" type="button" (click)="openCreateUser()">
+      <i class="bi bi-plus-lg me-1"></i> Nouvel utilisateur
+    </button>
+  }
+</app-page-header>
+
+<div class="card">
+  <div class="card-body">
+    <div class="d-flex flex-wrap gap-2 mb-3">
+      <div class="position-relative flex-grow-1 search-field">
+        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+        <input
+          class="form-control ps-5"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilter()"
+          placeholder="Rechercher par nom, prénom, email..."
+          aria-label="Rechercher"
+        />
+      </div>
+      <select class="form-select w-auto" [(ngModel)]="filterRole" (ngModelChange)="applyFilter()" aria-label="Filtrer par rôle">
+        <option value="">Tous les rôles</option>
+        @for (role of roles(); track role.id) {
+          <option [value]="role.code">{{ role.libelle }}</option>
+        }
+      </select>
+      <select class="form-select w-auto" [(ngModel)]="filterStatus" (ngModelChange)="applyFilter()" aria-label="Filtrer par statut">
+        <option value="">Tous les statuts</option>
+        <option value="active">Actif</option>
+        <option value="inactive">Inactif</option>
+      </select>
+    </div>
+
+    @if (loading()) {
+      <div class="text-center py-5 text-muted">
+        <div class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></div>
+        Chargement des utilisateurs...
+      </div>
+    } @else if (filteredUsers().length === 0) {
+      <app-ui-empty-state title="Aucun utilisateur trouvé" message="Aucun utilisateur ne correspond à vos critères de recherche." icon="bi-people">
+        @if (auth.hasPermission('USER:CREATE')) {
+          <button class="btn btn-primary" type="button" (click)="openCreateUser()">
+            <i class="bi bi-plus-lg me-1"></i> Créer un utilisateur
+          </button>
+        }
+      </app-ui-empty-state>
+    } @else {
+      <div class="table-responsive">
+        <table class="table align-middle table-hover mb-0">
+          <thead>
+            <tr>
+              <th class="sortable" (click)="onSort('nom')">Nom <i [class]="sortIcon('nom')"></i></th>
+              <th class="sortable" (click)="onSort('prenom')">Prénom <i [class]="sortIcon('prenom')"></i></th>
+              <th class="sortable" (click)="onSort('email')">Email <i [class]="sortIcon('email')"></i></th>
+              <th>Téléphone</th>
+              <th>Statut</th>
+              <th class="sortable" (click)="onSort('createdAt')">Créé le <i [class]="sortIcon('createdAt')"></i></th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (u of paginatedUsers(); track u.id) {
+              <tr>
+                <td class="fw-medium">{{ u.nom }}</td>
+                <td>{{ u.prenom }}</td>
+                <td class="email-cell">{{ u.email }}</td>
+                <td>{{ u.telephone || '—' }}</td>
+                <td>
+                  <span class="badge" [class.text-bg-success]="u.actif" [class.text-bg-danger]="!u.actif">
+                    {{ u.actif ? 'Actif' : 'Inactif' }}
+                  </span>
+                </td>
+                <td>{{ u.createdAt | date:'dd/MM/yyyy' }}</td>
+                <td class="text-end">
+                  <div ngbDropdown class="dropdown d-inline-block">
+                    <button class="btn btn-icon btn-outline-secondary" type="button" ngbDropdownToggle [attr.aria-label]="'Actions pour ' + u.prenom + ' ' + u.nom">
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end">
+                      <a class="dropdown-item" [routerLink]="['/administration/utilisateurs', u.id]">
+                        <i class="bi bi-eye me-2"></i> Voir
+                      </a>
+                      @if (auth.hasPermission('USER:UPDATE')) {
+                        <button class="dropdown-item" type="button" (click)="openEditUser(u)">
+                          <i class="bi bi-pencil me-2"></i> Modifier
+                        </button>
+                      }
+                      @if (auth.hasPermission('USER:UPDATE')) {
+                        <button class="dropdown-item" type="button" (click)="openPassword(u)">
+                          <i class="bi bi-key me-2"></i> Mot de passe
+                        </button>
+                      }
+                      @if (auth.hasPermission('USER:UPDATE')) {
+                        <button class="dropdown-item" type="button" (click)="openRoles(u)">
+                          <i class="bi bi-shield-person me-2"></i> Rôles
+                        </button>
+                      }
+                      @if (auth.hasPermission('USER:UPDATE')) {
+                        <button class="dropdown-item" type="button" (click)="toggleActive(u)">
+                          <i [class]="u.actif ? 'bi bi-slash-circle me-2' : 'bi bi-check-circle me-2'"></i>
+                          {{ u.actif ? 'Désactiver' : 'Activer' }}
+                        </button>
+                      }
+                      @if (auth.hasPermission('USER:DELETE')) {
+                        <hr class="dropdown-divider" />
+                        <button class="dropdown-item text-danger" type="button" (click)="confirmDelete(u)">
+                          <i class="bi bi-trash me-2"></i> Supprimer
+                        </button>
+                      }
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-muted small">{{ paginationInfo() }}</span>
+          <select class="form-select form-select-sm w-auto" [ngModel]="pageSize()" (ngModelChange)="onPageSizeChange($event)" aria-label="Taille de page">
+            <option [ngValue]="10">10 / page</option>
+            <option [ngValue]="25">25 / page</option>
+            <option [ngValue]="50">50 / page</option>
+          </select>
+        </div>
+        <ngb-pagination
+          [collectionSize]="filteredUsers().length"
+          [page]="pageIndex() + 1"
+          [pageSize]="pageSize()"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="onPageChange($event)"
+        />
+      </div>
+    }
+  </div>
+</div>

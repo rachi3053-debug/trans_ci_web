@@ -1,0 +1,43 @@
+.search-field {
+  min-width: 220px;
+}
+
+.perm-code {
+  font-family: monospace;
+  font-size: 0.8rem;
+  background: var(--appd-body-bg);
+  padding: 0.15rem 0.4rem;
+  border-radius: 3px;
+}
+
+.action-badge {
+  &[data-action="READ"] {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+  }
+
+  &[data-action="CREATE"] {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+  }
+
+  &[data-action="UPDATE"] {
+    background: rgba(234, 179, 8, 0.1);
+    color: #d97706;
+  }
+
+  &[data-action="DELETE"] {
+    background: rgba(214, 69, 69, 0.1);
+    color: #d64545;
+  }
+
+  &[data-action="VALIDATE"] {
+    background: rgba(168, 85, 247, 0.1);
+    color: #a855f7;
+  }
+
+  &[data-action="EXPORT"] {
+    background: rgba(6, 182, 212, 0.1);
+    color: #0891b2;
+  }
+}

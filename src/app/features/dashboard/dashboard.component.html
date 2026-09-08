@@ -1,0 +1,119 @@
+<app-page-header
+  title="Tableau de bord"
+  [subtitle]="'Bonjour, ' + (user()?.prenom || 'Utilisateur') + ' — voici un aperçu de votre système de gestion TransCI.'"
+/>
+
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    @if (statsLoading()) {
+      <div class="card kpi-card h-100">
+        <div class="card-body d-flex align-items-center gap-3">
+          <div class="kpi-icon bg-primary-subtle text-primary"><i class="bi bi-people"></i></div>
+          <div>
+            <div class="placeholder-glow"><span class="placeholder col-4"></span></div>
+            <div class="placeholder-glow mt-2"><span class="placeholder col-6"></span></div>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <app-ui-kpi-card
+        label="Utilisateurs"
+        [value]="userCount()"
+        icon="bi-people"
+        iconClass="bg-primary-subtle text-primary"
+      />
+    }
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <app-ui-kpi-card
+      label="Rôles"
+      [value]="roleCount()"
+      icon="bi-person-badge"
+      iconClass="bg-info-subtle text-info"
+    />
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <app-ui-kpi-card
+      label="Permissions"
+      [value]="permissionCount()"
+      icon="bi-shield-lock"
+      iconClass="bg-secondary-subtle text-secondary"
+    />
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card kpi-card h-100">
+      <div class="card-body d-flex align-items-center gap-3">
+        <div class="kpi-icon bg-success-subtle text-success"><i class="bi bi-shield-check"></i></div>
+        <div>
+          <div class="mb-1"><app-ui-status-badge label="Connecté" status="actif" /></div>
+          <div class="kpi-label">Session TransCI</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-xl-6">
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="card-title mb-0 d-flex align-items-center gap-2">
+          <i class="bi bi-lightning-charge text-info"></i>
+          Accès rapides
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="d-flex flex-column gap-2">
+          @if (hasPermission('USER:READ')) {
+            <a routerLink="/administration/utilisateurs" class="quick-link">
+              <i class="bi bi-people"></i>
+              <span class="flex-grow-1">Gestion des utilisateurs</span>
+              <i class="bi bi-arrow-right text-muted"></i>
+            </a>
+          }
+          @if (hasPermission('ROLE:READ')) {
+            <a routerLink="/administration/roles" class="quick-link">
+              <i class="bi bi-person-badge"></i>
+              <span class="flex-grow-1">Gestion des rôles</span>
+              <i class="bi bi-arrow-right text-muted"></i>
+            </a>
+          }
+          @if (hasPermission('PERMISSION:READ')) {
+            <a routerLink="/administration/permissions" class="quick-link">
+              <i class="bi bi-shield-lock"></i>
+              <span class="flex-grow-1">Permissions</span>
+              <i class="bi bi-arrow-right text-muted"></i>
+            </a>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-6">
+    <div class="card h-100">
+      <div class="card-header">
+        <h5 class="card-title mb-0 d-flex align-items-center gap-2">
+          <i class="bi bi-person-circle text-primary"></i>
+          Mon compte
+        </h5>
+      </div>
+      <div class="card-body">
+        <div class="d-flex flex-column gap-3">
+          <div class="d-flex justify-content-between align-items-center gap-2">
+            <span class="text-muted small">Nom</span>
+            <span class="fw-medium text-end">{{ user()?.prenom }} {{ user()?.nom }}</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center gap-2">
+            <span class="text-muted small">Email</span>
+            <span class="fw-medium text-end">{{ user()?.email }}</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center gap-2">
+            <span class="text-muted small">Rôles</span>
+            <span class="fw-medium text-end">{{ roles().join(', ') || 'Aucun rôle' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,51 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ data.mode === 'create' ? 'Nouveau rôle' : 'Modifier le rôle' }}</h5>
+  <button type="button" class="btn-close" aria-label="Fermer" (click)="activeModal.dismiss()"></button>
+</div>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div class="modal-body">
+    <div class="modal-grid">
+      <div class="mb-3">
+        <label for="role-code" class="form-label">Code</label>
+        <input
+          id="role-code"
+          type="text"
+          class="form-control"
+          formControlName="code"
+          placeholder="ex. ADMIN"
+          [class.is-invalid]="form.controls.code.touched && form.controls.code.invalid"
+        />
+        @if (form.controls.code.hasError('required') && form.controls.code.touched) {
+          <div class="invalid-feedback d-block">Le code est requis</div>
+        }
+      </div>
+      <div class="mb-3">
+        <label for="role-libelle" class="form-label">Libellé</label>
+        <input
+          id="role-libelle"
+          type="text"
+          class="form-control"
+          formControlName="libelle"
+          [class.is-invalid]="form.controls.libelle.touched && form.controls.libelle.invalid"
+        />
+        @if (form.controls.libelle.hasError('required') && form.controls.libelle.touched) {
+          <div class="invalid-feedback d-block">Le libellé est requis</div>
+        }
+      </div>
+      <div class="mb-3 full-width">
+        <label for="role-description" class="form-label">Description</label>
+        <textarea id="role-description" class="form-control" formControlName="description" rows="3"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="activeModal.dismiss()">Annuler</button>
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid || submitting()">
+      @if (submitting()) {
+        <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+      } @else {
+        {{ data.mode === 'create' ? 'Créer' : 'Enregistrer' }}
+      }
+    </button>
+  </div>
+</form>
