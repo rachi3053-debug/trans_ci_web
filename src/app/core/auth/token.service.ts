@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 const ACCESS_TOKEN_KEY = 'transci_access_token';
 const REFRESH_TOKEN_KEY = 'transci_refresh_token';
 const REMEMBER_KEY = 'transci_remember';
+const TENANT_ID_KEY = 'transci_tenant_id';
 
 @Injectable({ providedIn: 'root' })
 export class TokenService {
@@ -48,11 +49,29 @@ export class TokenService {
     this.setRefreshToken(refreshToken);
   }
 
+  setTenantId(tenantId: string | null): void {
+    if (tenantId) {
+      this.getStorage().setItem(TENANT_ID_KEY, tenantId);
+    } else {
+      this.clearTenantId();
+    }
+  }
+
+  getTenantId(): string | null {
+    return this.getStorage().getItem(TENANT_ID_KEY);
+  }
+
+  clearTenantId(): void {
+    localStorage.removeItem(TENANT_ID_KEY);
+    sessionStorage.removeItem(TENANT_ID_KEY);
+  }
+
   clearTokens(): void {
     localStorage.removeItem(ACCESS_TOKEN_KEY);
     localStorage.removeItem(REFRESH_TOKEN_KEY);
     sessionStorage.removeItem(ACCESS_TOKEN_KEY);
     sessionStorage.removeItem(REFRESH_TOKEN_KEY);
+    this.clearTenantId();
   }
 
   hasTokens(): boolean {

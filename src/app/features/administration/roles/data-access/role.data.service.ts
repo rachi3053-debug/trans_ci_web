@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { Role } from '../../../../core/auth/models/role.model';
 import { Permission } from '../../../../core/auth/models/permission.model';
+import { fetchAllPages } from '../../../../core/models/paginated.model';
 
 @Injectable({ providedIn: 'root' })
 export class RoleDataService {
@@ -11,7 +12,7 @@ export class RoleDataService {
   private readonly base = `${environment.apiUrl}/roles`;
 
   getAll(): Observable<Role[]> {
-    return this.http.get<Role[]>(this.base);
+    return fetchAllPages<Role>(this.http, this.base);
   }
 
   getById(id: string): Observable<Role> {

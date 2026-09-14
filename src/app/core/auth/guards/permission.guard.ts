@@ -6,6 +6,11 @@ export const permissionGuard: CanActivateFn = (route: ActivatedRouteSnapshot) =>
   const auth = inject(AuthService);
   const router = inject(Router);
 
+  // ROOT : accès global, toutes permissions.
+  if (auth.isRoot()) {
+    return true;
+  }
+
   const requiredPermissions = (route.data['permissions'] as string[]) ?? [];
   const requireAll = (route.data['requireAll'] as boolean) ?? false;
 

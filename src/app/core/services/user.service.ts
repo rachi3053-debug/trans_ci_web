@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { User } from '../auth/models/user.model';
+import { fetchAllPages } from '../models/paginated.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -10,19 +11,19 @@ export class UserService {
   private readonly base = `${environment.apiUrl}/users`;
 
   getAll(): Observable<User[]> {
-    return this.http.get<User[]>(this.base);
+    return fetchAllPages<User>(this.http, this.base);
   }
 
   getById(id: string): Observable<User> {
     return this.http.get<User>(`${this.base}/${id}`);
   }
 
-  create(data: { nom: string; prenom: string; email: string; telephone?: string; password: string }): Observable<User> {
+  create(data: { nom: string; prenom: string; email: string; telephone?: string; roleCode?: string }): Observable<User> {
     return this.http.post<User>(this.base, data);
   }
 
   update(id: string, data: Partial<{ nom: string; prenom: string; email: string; telephone: string; password: string; actif: boolean }>): Observable<User> {
-    return this.http.patch<User>(`${this.base}/${id}`, data);
+    return this.http.put<User>(`${this.base}/${id}`, data);
   }
 
   delete(id: string): Observable<void> {
