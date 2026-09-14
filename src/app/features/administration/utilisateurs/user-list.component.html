@@ -29,6 +29,7 @@
         <option value="">Tous les statuts</option>
         <option value="active">Actif</option>
         <option value="inactive">Inactif</option>
+        <option value="invited">En attente (invité)</option>
       </select>
     </div>
 
@@ -62,13 +63,24 @@
           <tbody>
             @for (u of paginatedUsers(); track u.id) {
               <tr>
-                <td class="fw-medium">{{ u.nom }}</td>
+                <td class="fw-medium">
+                  <a class="d-inline-flex align-items-center gap-2 text-decoration-none text-body" [routerLink]="['/administration/utilisateurs', u.id]">
+                    <span class="avatar-cell" [class.has-image]="avatarUrls()[u.id]">
+                      @if (avatarUrls()[u.id]) {
+                        <img [src]="avatarUrls()[u.id]" alt="Avatar de {{ u.prenom }} {{ u.nom }}" />
+                      } @else {
+                        <span class="avatar-initials">{{ initials(u) }}</span>
+                      }
+                    </span>
+                    {{ u.nom }}
+                  </a>
+                </td>
                 <td>{{ u.prenom }}</td>
                 <td class="email-cell">{{ u.email }}</td>
                 <td>{{ u.telephone || '—' }}</td>
                 <td>
-                  <span class="badge" [class.text-bg-success]="u.actif" [class.text-bg-danger]="!u.actif">
-                    {{ u.actif ? 'Actif' : 'Inactif' }}
+                  <span class="badge" [class]="statusBadgeClass(u)">
+                    {{ statusLabel(u) }}
                   </span>
                 </td>
                 <td>{{ u.createdAt | date:'dd/MM/yyyy' }}</td>
@@ -86,17 +98,22 @@
                           <i class="bi bi-pencil me-2"></i> Modifier
                         </button>
                       }
-                      @if (auth.hasPermission('USER:UPDATE')) {
+                      @if (auth.hasPermission('USER:UPDATE') && isInvited(u)) {
+                        <button class="dropdown-item" type="button" (click)="resendInvitation(u)">
+                          <i class="bi bi-envelope me-2"></i> Renvoyer l'invitation
+                        </button>
+                      }
+                      <!--@if (auth.hasPermission('USER:UPDATE') && !isInvited(u)) {
                         <button class="dropdown-item" type="button" (click)="openPassword(u)">
                           <i class="bi bi-key me-2"></i> Mot de passe
                         </button>
-                      }
+                      }-->
                       @if (auth.hasPermission('USER:UPDATE')) {
                         <button class="dropdown-item" type="button" (click)="openRoles(u)">
-                          <i class="bi bi-shield-person me-2"></i> Rôles
+                          <i class="bi bi-shield-shaded me-2"></i> Rôles
                         </button>
                       }
-                      @if (auth.hasPermission('USER:UPDATE')) {
+                      @if (auth.hasPermission('USER:UPDATE') && !isInvited(u)) {
                         <button class="dropdown-item" type="button" (click)="toggleActive(u)">
                           <i [class]="u.actif ? 'bi bi-slash-circle me-2' : 'bi bi-check-circle me-2'"></i>
                           {{ u.actif ? 'Désactiver' : 'Activer' }}

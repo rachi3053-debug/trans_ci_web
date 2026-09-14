@@ -6,6 +6,11 @@ export const roleGuard: CanActivateFn = (route: ActivatedRouteSnapshot) => {
   const auth = inject(AuthService);
   const router = inject(Router);
 
+  // ROOT : accès global, aucun rôle requis.
+  if (auth.isRoot()) {
+    return true;
+  }
+
   const requiredRoles = (route.data['roles'] as string[]) ?? [];
 
   if (requiredRoles.length === 0) {

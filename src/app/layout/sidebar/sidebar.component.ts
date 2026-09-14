@@ -63,6 +63,7 @@ export class SidebarComponent {
           return children.length > 0
         }
         return (
+          this.authService.isRoot() ||
           !item.permission ||
           item.permission === 'admin' ||
           this.authService.hasPermission(item.permission)

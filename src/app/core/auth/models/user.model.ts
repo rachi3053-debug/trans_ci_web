@@ -1,3 +1,5 @@
+export type UserStatus = 'INVITED' | 'ACTIVE' | 'SUSPENDED' | 'DISABLED';
+
 export interface User {
   id: string;
   nom: string;
@@ -5,10 +7,13 @@ export interface User {
   email: string;
   telephone: string | null;
   actif: boolean;
+  status?: UserStatus;
   emailVerified: boolean;
   lastLoginAt: string | null;
   createdAt: string;
   updatedAt: string;
+  tenantId: string | null;
+  avatarPath?: string | null;
 }
 
 export interface LoginResponse {
@@ -28,5 +33,8 @@ export interface JwtPayload {
   permissions: string[];
   iat: number;
   exp: number;
+  isRoot?: boolean;
+  tenantId?: string | null;
+  tenantCode?: string | null;
   [key: string]: unknown;
 }

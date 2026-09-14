@@ -25,6 +25,8 @@ export class AuthService {
   readonly isAuthenticated = computed(() => !!this._user());
   readonly roles = computed(() => this.extractFromToken<string[]>('roles') ?? []);
   readonly permissions = computed(() => this.extractFromToken<string[]>('permissions') ?? []);
+  readonly isRootUser = computed(() => this.isRoot());
+  readonly tenantId = computed(() => this.extractFromToken<string | null>('tenantId') ?? null);
 
   constructor() {
     this.loadUserFromStorage();
@@ -40,6 +42,9 @@ export class AuthService {
         tap((res) => {
           this.tokenService.setRemember(remember);
           this.tokenService.setTokens(res.accessToken, res.refreshToken);
+          this.tokenService.setTenantId(
+            res.user?.tenantId ?? this.extractFromToken<string>('tenantId') ?? null,
+          );
           this._user.set(res.user);
           this._loading.set(false);
         }),
@@ -63,6 +68,9 @@ export class AuthService {
   getCurrentUser(): Observable<User> {
     return this.http.get<User>(`${environment.apiUrl}/auth/me`).pipe(
       tap((user) => {
+        this.tokenService.setTenantId(
+          user?.tenantId ?? this.extractFromToken<string>('tenantId') ?? null,
+        );
         this._user.set(user);
         this._initialized.set(true);
       }),
@@ -94,6 +102,43 @@ export class AuthService {
       );
   }
 
+  /**
+   * Valide un jeton d'invitation (page d'activation publique).
+   */
+  validateActivationToken(token: string): Observable<{ valid: boolean; email?: string; expiresAt?: string }> {
+    return this.http.get<{ valid: boolean; email?: string; expiresAt?: string }>(
+      `${environment.apiUrl}/auth/activation/validate`,
+      { params: { token } },
+    );
+  }
+
+  /**
+   * Active un compte invité : définit le mot de passe fourni par l'utilisateur.
+   */
+  activateAccount(token: string, password: string, confirmPassword: string): Observable<{ id: string; email: string }> {
+    return this.http.post<{ id: string; email: string }>(
+      `${environment.apiUrl}/auth/activation/activate`,
+      { token, password, confirmPassword },
+    );
+  }
+
+  /**
+   * Mot de passe oublié : demande l'envoi d'un lien de réinitialisation.
+   */
+  forgotPassword(email: string): Observable<null> {
+    return this.http.post<null>(`${environment.apiUrl}/auth/forgot-password`, { email });
+  }
+
+  /**
+   * Réinitialise le mot de passe avec le jeton reçu par email.
+   */
+  resetPassword(token: string, password: string, confirmPassword: string): Observable<{ id: string; email: string }> {
+    return this.http.post<{ id: string; email: string }>(
+      `${environment.apiUrl}/auth/reset-password`,
+      { token, password, confirmPassword },
+    );
+  }
+
   initialize(): Observable<User | null> {
     if (!this.tokenService.hasTokens()) {
       this._initialized.set(true);
@@ -105,6 +150,18 @@ export class AuthService {
 
   hasRole(role: string): boolean {
     return this.roles().includes(role);
+  }
+
+  /**
+   * Indique si l'utilisateur connecte est ROOT (super-administrateur systeme).
+   * Source de verite : le payload JWT (`isRoot` === true OU role 'ROOT'),
+   * jamais une deduction a partir de l'absence de tenant.
+   */
+  isRoot(): boolean {
+    return (
+      this.extractFromToken<boolean>('isRoot') === true ||
+      this.roles().includes('ROOT')
+    );
   }
 
   hasAnyRole(roles: string[]): boolean {
@@ -145,6 +202,7 @@ export class AuthService {
           lastLoginAt: null,
           createdAt: '',
           updatedAt: '',
+          tenantId: (payload['tenantId'] as string | undefined) ?? null,
         });
       } else {
         this.tokenService.clearTokens();

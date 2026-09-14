@@ -8,8 +8,7 @@ export interface CreateUserPayload {
   prenom: string;
   email: string;
   telephone?: string;
-  password: string;
-  roleCodes?: string[];
+  roleCode?: string;
 }
 
 export interface UpdateUserPayload {
@@ -34,8 +33,7 @@ export class UserMetier {
       prenom: payload.prenom,
       email: payload.email,
       telephone: payload.telephone,
-      password: payload.password,
-      actif: true,
+      roleCode: payload.roleCode,
     });
   }
 
@@ -61,5 +59,17 @@ export class UserMetier {
 
   setPassword(id: string, password: string): Observable<User> {
     return this.data.setPassword(id, password);
+  }
+
+  resendInvitation(id: string): Observable<void> {
+    return this.data.resendInvitation(id);
+  }
+
+  uploadAvatar(id: string, file: File): Observable<{ path: string; signedUrl: string }> {
+    return this.data.uploadAvatar(id, file);
+  }
+
+  getAvatarUrl(id: string): Observable<{ path: string; signedUrl: string }> {
+    return this.data.getAvatarUrl(id);
   }
 }
