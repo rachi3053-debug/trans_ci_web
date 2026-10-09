@@ -188,9 +188,35 @@ export class UserListComponent implements OnInit {
     });
   }*/
 
+  /**
+   * Un compte ROOT (ou tout compte hors tenant) porte des rôles GLOBAUX :
+   * `POST /users/:id/roles` le refuse explicitement (403,
+   * `UsersService.requireTenantScopeForRoles`) et REMPLACE tous les rôles.
+   *
+   * On masque/désactive donc l'action au lieu d'ouvrir une modale qui ne peut
+   * pas aboutir — et surtout pour ne jamais pouvoir envoyer un payload qui
+   * priverait ce compte de ses rôles.
+   */
+  canManageRoles(user: User): boolean {
+    return Boolean(user.tenantId);
+  }
+
   openRoles(user: User): void {
+    // Garde : même si l'entrée de menu était atteignable (état obsolète),
+    // on refuse d'ouvrir la modale plutôt que de proposer une action impossible.
+    if (!this.canManageRoles(user)) {
+      this.toastr.showErrorToastr(
+        'Les rôles système ne sont pas modifiables depuis cette interface.',
+      );
+      return;
+    }
+
     const ref = this.modalService.open(UserRolesModalComponent, { size: 'md', backdrop: 'static' });
-    ref.componentInstance.data = { userId: user.id, userName: `${user.prenom} ${user.nom}` } as UserRolesModalData;
+    ref.componentInstance.data = {
+      userId: user.id,
+      userName: `${user.prenom} ${user.nom}`,
+      userTenantId: user.tenantId,
+    } as UserRolesModalData;
     ref.closed.subscribe((done: boolean) => {
       if (done) { this.toastr.showSuccessToastr('Rôles mis à jour'); }
     });

@@ -59,10 +59,57 @@ export class AuthService {
   }
 
   logout(): void {
+    // Le backend doit blacklister le token, on le prévenons avant de purger.
+    const accessToken = this.tokenService.getAccessToken();
+    if (accessToken) {
+      this.notifyBackendLogout(accessToken, this.tokenService.getTenantId());
+    }
+
     this.tokenService.clearTokens();
     this._user.set(null);
     this._error.set(null);
     this.router.navigate(['/login']);
+  }
+
+  /**
+   * Prévient le backend de la déconnexion via `POST /auth/logout`
+   * (cf. `auth.controller.ts` côté API : `logout(@CurrentUser(), @Body('token'))`),
+   * afin que le token soit ajouté à la blacklist serveur.
+   *
+   * Choix technique : cette route est protégée par le `JwtAuthGuard` global,
+   * elle exige donc l'en-tête `Authorization`. `navigator.sendBeacon` ne permet
+   * pas d'ajouter des en-têtes (il renverrait un 401 systématique), on utilise
+   * donc `fetch` avec `keepalive: true`, qui survit à la navigation vers
+   * `/login`. On n'utilise volontairement pas `HttpClient` : l'intercepteur
+   * d'auth réagit à un 401 en tentant un refresh puis un logout, ce qui
+   * boucle.
+   *
+   * Best-effort : la purge locale est effectuée par `logout()` quoi qu'il
+   * arrive (succès, erreur réseau ou exception), donc le comportement
+   * historique de déconnexion est préservé.
+   */
+  private notifyBackendLogout(token: string, tenantId: string | null): void {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    if (tenantId) {
+      headers['X-Tenant-Id'] = tenantId;
+    }
+
+    try {
+      void fetch(`${environment.apiUrl}/auth/logout`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ token }),
+        keepalive: true,
+      }).catch(() => {
+        // Réseau indisponible : le token restera valide jusqu'à son expiration,
+        // la purge locale a déjà eu lieu.
+      });
+    } catch {
+      // `fetch` indisponible ou URL invalide : idem, purge locale garantie.
+    }
   }
 
   getCurrentUser(): Observable<User> {

@@ -8,6 +8,7 @@ import { Permission } from '../../../core/auth/models/permission.model';
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { ToastrCustomService } from '../../../partager/toastr-custom-service';
 import { ConfirmService } from '../../../core/helper/confirm.service';
+import {PermissionMetier} from '@views/administration/permissions/data-access/permission.metier';
 
 @Component({
   selector: 'app-permission-list',
@@ -17,7 +18,7 @@ import { ConfirmService } from '../../../core/helper/confirm.service';
   styleUrl: './permission-list.component.scss',
 })
 export class PermissionListComponent implements OnInit {
-  private readonly permissionService = inject(PermissionService);
+  private readonly permissionMetier = inject(PermissionMetier);
   private readonly toastr = inject(ToastrCustomService);
   private readonly confirmService = inject(ConfirmService);
   readonly auth = inject(AuthService);
@@ -39,7 +40,7 @@ export class PermissionListComponent implements OnInit {
 
   loadPermissions(): void {
     this.loading.set(true);
-    this.permissionService.getAll().subscribe({
+    this.permissionMetier.getAllPermissions().subscribe({
       next: (perms) => {
         this.permissions.set(perms);
         this.allModules.set([...new Set(perms.map((p) => p.module))].sort());
@@ -54,6 +55,7 @@ export class PermissionListComponent implements OnInit {
   }
 
   applyFilter(): void {
+
     let perms = this.permissions();
     if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase();
@@ -109,7 +111,7 @@ export class PermissionListComponent implements OnInit {
   confirmDelete(perm: Permission): void {
     this.confirmService.confirmDelete(`la permission "${perm.code}"`).then((ok) => {
       if (ok) {
-        this.permissionService.delete(perm.id).subscribe({
+        this.permissionMetier.deletePermission(perm.id).subscribe({
           next: () => {
             this.loadPermissions();
             this.toastr.showSuccessToastr('Permission supprimée avec succès');

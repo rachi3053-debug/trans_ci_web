@@ -4,30 +4,94 @@
 </div>
 <div class="modal-body">
   <p class="text-muted small">Rôles de {{ data.userName }}</p>
+
   @if (loading()) {
     <div class="text-center py-4">
       <div class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></div>
     </div>
   } @else {
+    @if (loadFailed()) {
+      <div class="alert alert-danger d-flex align-items-center gap-2 py-2" role="alert">
+        <i class="bi bi-exclamation-triangle"></i>
+        <span>
+          Impossible de charger les rôles de ce compte. Aucune modification ne peut être effectuée :
+          fermez cette fenêtre et réessayez.
+        </span>
+      </div>
+    }
+
+    @if (readOnly()) {
+      <div class="alert alert-warning d-flex align-items-start gap-2 py-2" role="alert">
+        <i class="bi bi-shield-lock mt-1"></i>
+        <span>
+          <strong>Rôles système non modifiables.</strong>
+          Ce compte possède des rôles globaux (hors tenant). Le serveur refuse toute
+          réaffectation de rôles pour ce type de compte : la liste ci-dessous est
+          uniquement informative et l'enregistrement est désactivé.
+        </span>
+      </div>
+    }
+
+    @if (!readOnly() && noAssignableRole()) {
+      <div class="alert alert-info d-flex align-items-start gap-2 py-2" role="alert">
+        <i class="bi bi-info-circle mt-1"></i>
+        <span>
+          Aucun rôle assignable n'est disponible dans le périmètre courant. L'enregistrement
+          est impossible : la plateforme remplacerait les rôles de ce compte par une liste vide.
+        </span>
+      </div>
+    }
+
     <div class="d-flex flex-column gap-2">
-      @for (role of roles(); track role.id) {
+      @for (role of assignableRoles(); track role.id) {
         <div class="form-check">
           <input
             class="form-check-input"
             type="checkbox"
             [id]="'role-' + role.id"
-            [checked]="selectedCodes().includes(role.code)"
+            [checked]="isSelected(role.code)"
+            [disabled]="readOnly()"
             (change)="onToggleRole(role.code, $event)"
           />
           <label class="form-check-label" [for]="'role-' + role.id">{{ role.libelle }}</label>
         </div>
       }
     </div>
+
+    @if (globalRoles().length > 0) {
+      <hr />
+      <p class="text-muted small mb-2">
+        Les rôles ci-dessous sont des <strong>rôles système</strong> : ils ne dépendent
+        d'aucun tenant et ne sont donc jamais assignables depuis cette interface.
+      </p>
+      @for (role of globalRoles(); track role.id) {
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            [id]="'role-global-' + role.id"
+            [checked]="isSelected(role.code)"
+            disabled
+          />
+          <label class="form-check-label text-muted" [for]="'role-global-' + role.id">
+            {{ role.libelle }}
+            <span class="badge text-bg-secondary ms-1">rôle système — non assignable</span>
+          </label>
+        </div>
+      }
+    }
+
+    @if (saveError(); as err) {
+      <div class="alert alert-danger d-flex align-items-start gap-2 py-2 mt-3 mb-0" role="alert">
+        <i class="bi bi-exclamation-octagon mt-1"></i>
+        <span>{{ err }}</span>
+      </div>
+    }
   }
 </div>
 <div class="modal-footer">
-  <button type="button" class="btn btn-light" (click)="onCancel()">Annuler</button>
-  <button type="button" class="btn btn-primary" [disabled]="loading() || submitting()" (click)="onSave()">
+  <button type="button" class="btn btn-light" [disabled]="submitting()" (click)="onCancel()">Annuler</button>
+  <button type="button" class="btn btn-primary" [disabled]="saveDisabled()" (click)="onSave()">
     @if (submitting()) {
       <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
     } @else {

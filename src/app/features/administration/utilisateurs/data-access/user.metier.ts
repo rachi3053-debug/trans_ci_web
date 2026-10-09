@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../../../../core/auth/models/user.model';
+import { Role } from '../../../../core/auth/models/role.model';
 import { UserDataService } from './user.data.service';
 
 export interface CreateUserPayload {
@@ -53,7 +54,14 @@ export class UserMetier {
     return this.data.assignRoles(id, roleCodes);
   }
 
-  getUserRoles(id: string): Observable<{ id: string; code: string; libelle: string }[]> {
+  /**
+   * Rôles affectés à l'utilisateur (entités complètes, `tenantId` inclus).
+   *
+   * `tenantId === null` y désigne un rôle GLOBAL, jamais assignable par cette
+   * route (403 côté API). Le type de retour est élargi depuis
+   * `{ id; code; libelle }[]` : compatible avec tous les appelants existants.
+   */
+  getUserRoles(id: string): Observable<Role[]> {
     return this.data.getRoles(id);
   }
 

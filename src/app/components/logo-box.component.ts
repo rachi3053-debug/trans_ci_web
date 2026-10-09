@@ -5,7 +5,7 @@ import { RouterLink } from '@angular/router';
   selector: 'app-logo-box',
   standalone: true,
   imports: [RouterLink],
-  templateUrl: './logo-box.html',
+  templateUrl: './logo-box.component.html',
   styles: ``,
 })
 export class LogoBoxComponent {

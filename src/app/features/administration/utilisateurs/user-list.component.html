@@ -109,9 +109,21 @@
                         </button>
                       }-->
                       @if (auth.hasPermission('USER:UPDATE')) {
-                        <button class="dropdown-item" type="button" (click)="openRoles(u)">
-                          <i class="bi bi-shield-shaded me-2"></i> Rôles
-                        </button>
+                        @if (canManageRoles(u)) {
+                          <button class="dropdown-item" type="button" (click)="openRoles(u)">
+                            <i class="bi bi-shield-shaded me-2"></i> Rôles
+                          </button>
+                        } @else {
+                          <!-- Compte ROOT / hors tenant : rôles globaux, non modifiables (403 côté API). -->
+                          <button
+                            class="dropdown-item"
+                            type="button"
+                            disabled
+                            title="Rôles système : non modifiables depuis cette interface"
+                          >
+                            <i class="bi bi-shield-shaded me-2"></i> Rôles (système)
+                          </button>
+                        }
                       }
                       @if (auth.hasPermission('USER:UPDATE') && !isInvited(u)) {
                         <button class="dropdown-item" type="button" (click)="toggleActive(u)">
