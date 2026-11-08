@@ -9,21 +9,21 @@
         </h5>
         <div class="row g-3">
           <div class="col-md-6">
-            <label class="form-label" for="nom">Nom</label>
+            <label class="form-label" for="nom">Nom <span class="text-danger">*</span></label>
             <input id="nom" class="form-control" formControlName="nom" [class.is-invalid]="form.controls.nom.invalid && form.controls.nom.touched" />
             @if (form.controls.nom.hasError('required') && form.controls.nom.touched) {
               <div class="invalid-feedback d-block">Le nom est requis</div>
             }
           </div>
           <div class="col-md-6">
-            <label class="form-label" for="prenom">Prénom</label>
+            <label class="form-label" for="prenom">Prénom <span class="text-danger">*</span></label>
             <input id="prenom" class="form-control" formControlName="prenom" [class.is-invalid]="form.controls.prenom.invalid && form.controls.prenom.touched" />
             @if (form.controls.prenom.hasError('required') && form.controls.prenom.touched) {
               <div class="invalid-feedback d-block">Le prénom est requis</div>
             }
           </div>
           <div class="col-md-6">
-            <label class="form-label" for="email">Email</label>
+            <label class="form-label" for="email">Email <span class="text-danger">*</span></label>
             <div class="input-group">
               <span class="input-group-text"><i class="bi bi-envelope"></i></span>
               <input id="email" class="form-control" formControlName="email" type="email" [class.is-invalid]="form.controls.email.invalid && form.controls.email.touched" />
@@ -47,38 +47,14 @@
 
       <div class="mb-4 pb-3 border-bottom">
         <h5 class="d-flex align-items-center gap-2 mb-3">
-          <i class="bi bi-lock text-success"></i> Sécurité
+          <i class="bi bi-envelope-check text-success"></i> Activation
         </h5>
-        <div class="row g-3">
-          <div class="col-md-6">
-            <label class="form-label" for="password">Mot de passe</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-lock"></i></span>
-              <input id="password" class="form-control" formControlName="password" [type]="hidePassword() ? 'password' : 'text'" [class.is-invalid]="form.controls.password.invalid && form.controls.password.touched" />
-              <button class="btn btn-outline-secondary" type="button" (click)="hidePassword.set(!hidePassword())" aria-label="Afficher ou masquer le mot de passe">
-                <i [class]="hidePassword() ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
-              </button>
-            </div>
-            @if (form.controls.password.hasError('required') && form.controls.password.touched) {
-              <div class="invalid-feedback d-block">Le mot de passe est requis</div>
-            }
-            @if (form.controls.password.hasError('minlength') && form.controls.password.touched) {
-              <div class="invalid-feedback d-block">8 caractères minimum</div>
-            }
-          </div>
-          <div class="col-md-6">
-            <label class="form-label" for="confirmPassword">Confirmer le mot de passe</label>
-            <div class="input-group">
-              <span class="input-group-text"><i class="bi bi-lock"></i></span>
-              <input id="confirmPassword" class="form-control" formControlName="confirmPassword" [type]="hidePassword() ? 'password' : 'text'" [class.is-invalid]="form.controls.confirmPassword.invalid && form.controls.confirmPassword.touched" />
-            </div>
-            @if (form.controls.confirmPassword.hasError('required') && form.controls.confirmPassword.touched) {
-              <div class="invalid-feedback d-block">La confirmation est requise</div>
-            }
-            @if (form.controls.confirmPassword.hasError('passwordMismatch') && form.controls.confirmPassword.touched) {
-              <div class="invalid-feedback d-block">Les mots de passe ne correspondent pas</div>
-            }
-          </div>
+        <div class="alert alert-info d-flex align-items-center gap-2 py-2 mb-0" role="alert">
+          <i class="bi bi-envelope"></i>
+          <span>
+            Une invitation par email est envoyée automatiquement à l'utilisateur :
+            il choisira lui-même son mot de passe en activant son compte.
+          </span>
         </div>
       </div>
 
@@ -88,7 +64,7 @@
         </h5>
         <div class="row g-3">
           <div class="col-md-6">
-            <label class="form-label" for="roleCode">Rôle</label>
+            <label class="form-label" for="roleCode">Rôle <span class="text-danger">*</span></label>
             <select id="roleCode" class="form-select" formControlName="roleCode" [class.is-invalid]="form.controls.roleCode.invalid && form.controls.roleCode.touched">
               <option value="" disabled>Sélectionner un rôle</option>
               @for (role of roles(); track role.id) {

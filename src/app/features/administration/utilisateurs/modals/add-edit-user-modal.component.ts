@@ -2,6 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { lastValueFrom } from 'rxjs';
 import { UserMetier } from '../data-access/user.metier';
 import { RoleService } from '../../../../core/services/role.service';
 import { Role } from '../../../../core/auth/models/role.model';
@@ -14,6 +15,7 @@ export interface AddEditUserModalData {
     prenom: string;
     email: string;
     telephone: string | null;
+    avatarPath?: string | null;
   };
 }
 
@@ -33,15 +35,16 @@ export class AddEditUserModalComponent implements OnInit {
   data!: AddEditUserModalData;
 
   readonly roles = signal<Role[]>([]);
-  readonly hidePassword = signal(true);
   readonly submitting = signal(false);
+  readonly selectedFile = signal<File | null>(null);
+  readonly avatarPreview = signal('');
+  readonly avatarUploading = signal(false);
 
   form = this.fb.nonNullable.group({
     nom: ['', Validators.required],
     prenom: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     telephone: [''],
-    password: [''],
     roleCode: [''],
   });
 
@@ -55,10 +58,24 @@ export class AddEditUserModalComponent implements OnInit {
       });
     }
     if (this.data.mode === 'create') {
-      this.form.controls.password.addValidators([Validators.required, Validators.minLength(8)]);
       this.form.controls.roleCode.addValidators(Validators.required);
     }
     this.roleService.getAll().subscribe({ next: (r) => this.roles.set(r) });
+  }
+
+  onAvatarSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.selectedFile.set(file);
+    const reader = new FileReader();
+    reader.onload = () => this.avatarPreview.set(String(reader.result ?? ''));
+    reader.readAsDataURL(file);
+  }
+
+  clearAvatar(): void {
+    this.selectedFile.set(null);
+    this.avatarPreview.set('');
   }
 
   onCancel(): void {
@@ -68,7 +85,26 @@ export class AddEditUserModalComponent implements OnInit {
   onSubmit(): void {
     if (this.form.invalid) return;
     this.submitting.set(true);
+
     const raw = this.form.getRawValue();
+
+    const close = (avatarResponses?: { id: string; avatar: File }[]) => {
+      if (avatarResponses && avatarResponses.length > 0) {
+        this.avatarUploading.set(true);
+        let chain: Promise<unknown> = Promise.resolve();
+        for (const item of avatarResponses) {
+          chain = chain.then(() =>
+            lastValueFrom(this.metier.uploadAvatar(item.id, item.avatar)),
+          );
+        }
+        chain
+          .then(() => this.activeModal.close(true))
+          .catch(() => this.activeModal.close(true))
+          .finally(() => this.avatarUploading.set(false));
+        return;
+      }
+      this.activeModal.close(true);
+    };
 
     if (this.data.mode === 'create') {
       this.metier.createUser({
@@ -76,11 +112,19 @@ export class AddEditUserModalComponent implements OnInit {
         prenom: raw.prenom,
         email: raw.email,
         telephone: raw.telephone || undefined,
-        password: raw.password,
-        roleCodes: raw.roleCode ? [raw.roleCode] : [],
+        roleCode: raw.roleCode || undefined,
       }).subscribe({
-        next: () => this.activeModal.close(true),
-        error: () => this.submitting.set(false),
+        next: (created) => {
+          this.submitting.set(false);
+          close(
+            this.selectedFile()
+              ? [{ id: created.id, avatar: this.selectedFile()! }]
+              : undefined,
+          );
+        },
+        error: () => {
+          this.submitting.set(false);
+        },
       });
     } else if (this.data.mode === 'edit' && this.data.user) {
       this.metier.updateUser(this.data.user.id, {
@@ -89,8 +133,17 @@ export class AddEditUserModalComponent implements OnInit {
         email: raw.email,
         telephone: raw.telephone || undefined,
       }).subscribe({
-        next: () => this.activeModal.close(true),
-        error: () => this.submitting.set(false),
+        next: () => {
+          this.submitting.set(false);
+          close(
+            this.selectedFile()
+              ? [{ id: this.data.user!.id, avatar: this.selectedFile()! }]
+              : undefined,
+          );
+        },
+        error: () => {
+          this.submitting.set(false);
+        },
       });
     }
   }

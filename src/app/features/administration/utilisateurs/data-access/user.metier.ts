@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../../../../core/auth/models/user.model';
+import { Role } from '../../../../core/auth/models/role.model';
 import { UserDataService } from './user.data.service';
 
 export interface CreateUserPayload {
@@ -8,8 +9,7 @@ export interface CreateUserPayload {
   prenom: string;
   email: string;
   telephone?: string;
-  password: string;
-  roleCodes?: string[];
+  roleCode?: string;
 }
 
 export interface UpdateUserPayload {
@@ -34,8 +34,7 @@ export class UserMetier {
       prenom: payload.prenom,
       email: payload.email,
       telephone: payload.telephone,
-      password: payload.password,
-      actif: true,
+      roleCode: payload.roleCode,
     });
   }
 
@@ -55,11 +54,30 @@ export class UserMetier {
     return this.data.assignRoles(id, roleCodes);
   }
 
-  getUserRoles(id: string): Observable<{ id: string; code: string; libelle: string }[]> {
+  /**
+   * Rôles affectés à l'utilisateur (entités complètes, `tenantId` inclus).
+   *
+   * `tenantId === null` y désigne un rôle GLOBAL, jamais assignable par cette
+   * route (403 côté API). Le type de retour est élargi depuis
+   * `{ id; code; libelle }[]` : compatible avec tous les appelants existants.
+   */
+  getUserRoles(id: string): Observable<Role[]> {
     return this.data.getRoles(id);
   }
 
   setPassword(id: string, password: string): Observable<User> {
     return this.data.setPassword(id, password);
+  }
+
+  resendInvitation(id: string): Observable<void> {
+    return this.data.resendInvitation(id);
+  }
+
+  uploadAvatar(id: string, file: File): Observable<{ path: string; signedUrl: string }> {
+    return this.data.uploadAvatar(id, file);
+  }
+
+  getAvatarUrl(id: string): Observable<{ path: string; signedUrl: string }> {
+    return this.data.getAvatarUrl(id);
   }
 }

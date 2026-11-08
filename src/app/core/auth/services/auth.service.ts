@@ -25,6 +25,8 @@ export class AuthService {
   readonly isAuthenticated = computed(() => !!this._user());
   readonly roles = computed(() => this.extractFromToken<string[]>('roles') ?? []);
   readonly permissions = computed(() => this.extractFromToken<string[]>('permissions') ?? []);
+  readonly isRootUser = computed(() => this.isRoot());
+  readonly tenantId = computed(() => this.extractFromToken<string | null>('tenantId') ?? null);
 
   constructor() {
     this.loadUserFromStorage();
@@ -40,6 +42,9 @@ export class AuthService {
         tap((res) => {
           this.tokenService.setRemember(remember);
           this.tokenService.setTokens(res.accessToken, res.refreshToken);
+          this.tokenService.setTenantId(
+            res.user?.tenantId ?? this.extractFromToken<string>('tenantId') ?? null,
+          );
           this._user.set(res.user);
           this._loading.set(false);
         }),
@@ -54,15 +59,65 @@ export class AuthService {
   }
 
   logout(): void {
+    // Le backend doit blacklister le token, on le prévenons avant de purger.
+    const accessToken = this.tokenService.getAccessToken();
+    if (accessToken) {
+      this.notifyBackendLogout(accessToken, this.tokenService.getTenantId());
+    }
+
     this.tokenService.clearTokens();
     this._user.set(null);
     this._error.set(null);
     this.router.navigate(['/login']);
   }
 
+  /**
+   * Prévient le backend de la déconnexion via `POST /auth/logout`
+   * (cf. `auth.controller.ts` côté API : `logout(@CurrentUser(), @Body('token'))`),
+   * afin que le token soit ajouté à la blacklist serveur.
+   *
+   * Choix technique : cette route est protégée par le `JwtAuthGuard` global,
+   * elle exige donc l'en-tête `Authorization`. `navigator.sendBeacon` ne permet
+   * pas d'ajouter des en-têtes (il renverrait un 401 systématique), on utilise
+   * donc `fetch` avec `keepalive: true`, qui survit à la navigation vers
+   * `/login`. On n'utilise volontairement pas `HttpClient` : l'intercepteur
+   * d'auth réagit à un 401 en tentant un refresh puis un logout, ce qui
+   * boucle.
+   *
+   * Best-effort : la purge locale est effectuée par `logout()` quoi qu'il
+   * arrive (succès, erreur réseau ou exception), donc le comportement
+   * historique de déconnexion est préservé.
+   */
+  private notifyBackendLogout(token: string, tenantId: string | null): void {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    };
+    if (tenantId) {
+      headers['X-Tenant-Id'] = tenantId;
+    }
+
+    try {
+      void fetch(`${environment.apiUrl}/auth/logout`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ token }),
+        keepalive: true,
+      }).catch(() => {
+        // Réseau indisponible : le token restera valide jusqu'à son expiration,
+        // la purge locale a déjà eu lieu.
+      });
+    } catch {
+      // `fetch` indisponible ou URL invalide : idem, purge locale garantie.
+    }
+  }
+
   getCurrentUser(): Observable<User> {
     return this.http.get<User>(`${environment.apiUrl}/auth/me`).pipe(
       tap((user) => {
+        this.tokenService.setTenantId(
+          user?.tenantId ?? this.extractFromToken<string>('tenantId') ?? null,
+        );
         this._user.set(user);
         this._initialized.set(true);
       }),
@@ -94,6 +149,43 @@ export class AuthService {
       );
   }
 
+  /**
+   * Valide un jeton d'invitation (page d'activation publique).
+   */
+  validateActivationToken(token: string): Observable<{ valid: boolean; email?: string; expiresAt?: string }> {
+    return this.http.get<{ valid: boolean; email?: string; expiresAt?: string }>(
+      `${environment.apiUrl}/auth/activation/validate`,
+      { params: { token } },
+    );
+  }
+
+  /**
+   * Active un compte invité : définit le mot de passe fourni par l'utilisateur.
+   */
+  activateAccount(token: string, password: string, confirmPassword: string): Observable<{ id: string; email: string }> {
+    return this.http.post<{ id: string; email: string }>(
+      `${environment.apiUrl}/auth/activation/activate`,
+      { token, password, confirmPassword },
+    );
+  }
+
+  /**
+   * Mot de passe oublié : demande l'envoi d'un lien de réinitialisation.
+   */
+  forgotPassword(email: string): Observable<null> {
+    return this.http.post<null>(`${environment.apiUrl}/auth/forgot-password`, { email });
+  }
+
+  /**
+   * Réinitialise le mot de passe avec le jeton reçu par email.
+   */
+  resetPassword(token: string, password: string, confirmPassword: string): Observable<{ id: string; email: string }> {
+    return this.http.post<{ id: string; email: string }>(
+      `${environment.apiUrl}/auth/reset-password`,
+      { token, password, confirmPassword },
+    );
+  }
+
   initialize(): Observable<User | null> {
     if (!this.tokenService.hasTokens()) {
       this._initialized.set(true);
@@ -105,6 +197,18 @@ export class AuthService {
 
   hasRole(role: string): boolean {
     return this.roles().includes(role);
+  }
+
+  /**
+   * Indique si l'utilisateur connecte est ROOT (super-administrateur systeme).
+   * Source de verite : le payload JWT (`isRoot` === true OU role 'ROOT'),
+   * jamais une deduction a partir de l'absence de tenant.
+   */
+  isRoot(): boolean {
+    return (
+      this.extractFromToken<boolean>('isRoot') === true ||
+      this.roles().includes('ROOT')
+    );
   }
 
   hasAnyRole(roles: string[]): boolean {
@@ -145,6 +249,7 @@ export class AuthService {
           lastLoginAt: null,
           createdAt: '',
           updatedAt: '',
+          tenantId: (payload['tenantId'] as string | undefined) ?? null,
         });
       } else {
         this.tokenService.clearTokens();

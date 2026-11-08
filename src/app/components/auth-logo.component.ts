@@ -5,21 +5,6 @@ import { RouterLink } from '@angular/router'
   selector: 'app-auth-logo',
   standalone: true,
   imports: [RouterLink],
-  template: `<a routerLink="/login" class="auth-brand mb-4 d-inline-block">
-    <img
-      src="assets/images/logotoggle.png"
-      alt="TransCI"
-      height="56"
-      class="logo-dark"
-      style="object-fit: contain"
-    />
-    <img
-      src="assets/images/logotoggle.png"
-      alt="TransCI"
-      height="56"
-      class="logo-light"
-      style="object-fit: contain"
-    />
-  </a>`,
+  template:'./session-warning-modal.component.html/',
 })
 export class AuthLogoComponent {}

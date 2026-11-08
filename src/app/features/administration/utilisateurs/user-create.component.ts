@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { PageHeaderComponent } from '../../../shared/components/page-header.component';
 import { UserService } from '../../../core/services/user.service';
 import { RoleService } from '../../../core/services/role.service';
@@ -23,7 +23,6 @@ export class UserCreateComponent implements OnInit {
   private readonly toastr = inject(ToastrCustomService);
 
   readonly roles = signal<Role[]>([]);
-  readonly hidePassword = signal(true);
   readonly submitting = signal(false);
 
   form = this.fb.nonNullable.group({
@@ -31,33 +30,23 @@ export class UserCreateComponent implements OnInit {
     prenom: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     telephone: [''],
-    password: ['', [Validators.required, Validators.minLength(8)]],
-    confirmPassword: ['', Validators.required],
     roleCode: ['', Validators.required],
-  }, { validators: [this.passwordMatchValidator] });
+  });
 
   ngOnInit(): void {
     this.roleService.getAll().subscribe({ next: (r) => this.roles.set(r) });
   }
 
-  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
-    const password = control.get('password');
-    const confirm = control.get('confirmPassword');
-    if (password && confirm && password.value !== confirm.value) {
-      confirm.setErrors({ passwordMismatch: true });
-      return { passwordMismatch: true };
-    }
-    return null;
-  }
-
   onSubmit(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.submitting.set(true);
-    const { confirmPassword, ...data } = this.form.getRawValue();
-    void confirmPassword;
+    const data = this.form.getRawValue();
     this.userService.create(data).subscribe({
       next: () => {
-        this.toastr.showSuccessToastr('Utilisateur créé avec succès');
+        this.toastr.showSuccessToastr('Utilisateur créé. Invitation envoyée par email');
         this.router.navigate(['/administration/utilisateurs']);
       },
       error: (err) => {

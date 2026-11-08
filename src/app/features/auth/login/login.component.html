@@ -79,7 +79,7 @@
             />
             <label class="form-check-label" for="remember">Se souvenir de moi</label>
           </div>
-          <a class="forgot-link" href="#" (click)="$event.preventDefault()">Mot de passe oublié ?</a>
+          <a class="forgot-link" routerLink="/auth/forgot-password">Mot de passe oublié ?</a>
         </div>
 
         <button type="submit" class="btn btn-primary w-100" [disabled]="loading()">

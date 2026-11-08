@@ -1,65 +1,125 @@
 <div class="modal-header">
-  <h4 class="modal-title">{{ data.mode === 'create' ? 'Nouvel utilisateur' : 'Modifier l'utilisateur' }}</h4>
+  <h4 class="modal-title">{{ data.mode === 'create' ? 'Nouvel utilisateur' : "Modifier l'utilisateur" }}</h4>
   <button type="button" class="btn-close" aria-label="Fermer" (click)="onCancel()"></button>
 </div>
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
   <div class="modal-body">
     <div class="row g-3">
+      <div class="col-12">
+        <label class="form-label d-block text-center" for="modal-avatar">Avatar</label>
+        <div class="d-flex flex-column align-items-center gap-2">
+          <div class="avatar-frame" (click)="fileInput.click()">
+            <div class="avatar-preview" [class.has-image]="avatarPreview() !== ''">
+              @if (avatarPreview()) {
+                <img [src]="avatarPreview()" alt="Aperçu de l'avatar" />
+              } @else {
+                <i class="bi bi-person"></i>
+              }
+            </div>
+            <button
+              type="button"
+              class="avatar-badge"
+              [attr.aria-label]="avatarPreview() ? 'Changer la photo' : 'Ajouter une photo'"
+              (click)="$event.stopPropagation(); fileInput.click()"
+            >
+              <i class="bi bi-camera-fill"></i>
+            </button>
+          </div>
+
+          <input
+            #fileInput
+            id="modal-avatar"
+            class="d-none"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            (change)="onAvatarSelected($event)"
+          />
+
+          <div class="form-text text-center">
+            JPG, PNG ou WebP — 10 Mo maximum.
+          </div>
+
+          @if (avatarPreview()) {
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="clearAvatar()">
+              <i class="bi bi-x-lg me-1"></i>Retirer la photo
+            </button>
+          }
+        </div>
+      </div>
+
+
       <div class="col-md-6">
         <label class="form-label" for="modal-nom">Nom</label>
-        <input id="modal-nom" class="form-control" formControlName="nom" [class.is-invalid]="form.controls.nom.invalid && form.controls.nom.touched" />
+        <input
+          id="modal-nom"
+          class="form-control"
+          formControlName="nom"
+          [class.is-invalid]="form.controls.nom.invalid && form.controls.nom.touched"
+        />
         @if (form.controls.nom.hasError('required') && form.controls.nom.touched) {
           <div class="invalid-feedback d-block">Le nom est requis</div>
         }
       </div>
+
       <div class="col-md-6">
         <label class="form-label" for="modal-prenom">Prénom</label>
-        <input id="modal-prenom" class="form-control" formControlName="prenom" [class.is-invalid]="form.controls.prenom.invalid && form.controls.prenom.touched" />
+        <input
+          id="modal-prenom"
+          class="form-control"
+          formControlName="prenom"
+          [class.is-invalid]="form.controls.prenom.invalid && form.controls.prenom.touched"
+        />
         @if (form.controls.prenom.hasError('required') && form.controls.prenom.touched) {
           <div class="invalid-feedback d-block">Le prénom est requis</div>
         }
       </div>
+
       <div class="col-md-6">
         <label class="form-label" for="modal-email">Email</label>
-        <div class="input-group">
+        <div class="input-group has-validation">
           <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-          <input id="modal-email" class="form-control" formControlName="email" type="email" [class.is-invalid]="form.controls.email.invalid && form.controls.email.touched" />
+          <input
+            id="modal-email"
+            class="form-control"
+            formControlName="email"
+            type="email"
+            [class.is-invalid]="form.controls.email.invalid && form.controls.email.touched"
+          />
+          @if (form.controls.email.hasError('required') && form.controls.email.touched) {
+            <div class="invalid-feedback">L'email est requis</div>
+          } @else if (form.controls.email.hasError('email') && form.controls.email.touched) {
+            <div class="invalid-feedback">Format email invalide</div>
+          }
         </div>
-        @if (form.controls.email.hasError('required') && form.controls.email.touched) {
-          <div class="invalid-feedback d-block">L'email est requis</div>
-        }
-        @if (form.controls.email.hasError('email') && form.controls.email.touched) {
-          <div class="invalid-feedback d-block">Format email invalide</div>
-        }
       </div>
+
       <div class="col-md-6">
         <label class="form-label" for="modal-telephone">Téléphone</label>
         <div class="input-group">
           <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-          <input id="modal-telephone" class="form-control" formControlName="telephone" />
+          <input id="modal-telephone" class="form-control" formControlName="telephone" type="tel" />
         </div>
       </div>
 
       @if (data.mode === 'create') {
-        <div class="col-md-6">
-          <label class="form-label" for="modal-password">Mot de passe</label>
-          <div class="input-group">
-            <span class="input-group-text"><i class="bi bi-lock"></i></span>
-            <input id="modal-password" class="form-control" formControlName="password" [type]="hidePassword() ? 'password' : 'text'" [class.is-invalid]="form.controls.password.invalid && form.controls.password.touched" />
-            <button class="btn btn-outline-secondary" type="button" (click)="hidePassword.set(!hidePassword())" aria-label="Afficher ou masquer le mot de passe">
-              <i [class]="hidePassword() ? 'bi bi-eye' : 'bi bi-eye-slash'"></i>
-            </button>
+        <div class="col-12">
+          <div class="alert alert-info d-flex align-items-center gap-2 py-2 mb-0" role="alert">
+            <i class="bi bi-envelope-check"></i>
+            <span>
+              Une invitation par email sera envoyée ; l'utilisateur choisira lui-même
+              son mot de passe à l'activation.
+            </span>
           </div>
-          @if (form.controls.password.hasError('required') && form.controls.password.touched) {
-            <div class="invalid-feedback d-block">Le mot de passe est requis</div>
-          }
-          @if (form.controls.password.hasError('minlength') && form.controls.password.touched) {
-            <div class="invalid-feedback d-block">8 caractères minimum</div>
-          }
         </div>
+
         <div class="col-md-6">
           <label class="form-label" for="modal-roleCode">Rôle</label>
-          <select id="modal-roleCode" class="form-select" formControlName="roleCode" [class.is-invalid]="form.controls.roleCode.invalid && form.controls.roleCode.touched">
+          <select
+            id="modal-roleCode"
+            class="form-select"
+            formControlName="roleCode"
+            [class.is-invalid]="form.controls.roleCode.invalid && form.controls.roleCode.touched"
+          >
             <option value="" disabled>Sélectionner un rôle</option>
             @for (role of roles(); track role.id) {
               <option [value]="role.code">{{ role.libelle }}</option>
@@ -72,11 +132,15 @@
       }
     </div>
   </div>
+
   <div class="modal-footer">
-    <button type="button" class="btn btn-light" (click)="onCancel()">Annuler</button>
-    <button type="submit" class="btn btn-primary" [disabled]="form.invalid || submitting()">
-      @if (submitting()) {
+    <button type="button" class="btn btn-light" (click)="onCancel()" [disabled]="submitting() || avatarUploading()">
+      Annuler
+    </button>
+    <button type="submit" class="btn btn-primary" [disabled]="form.invalid || submitting() || avatarUploading()">
+      @if (submitting() || avatarUploading()) {
         <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+        {{ avatarUploading() ? "Envoi de l'avatar..." : 'Enregistrement...' }}
       } @else {
         <span>{{ data.mode === 'create' ? 'Créer' : 'Enregistrer' }}</span>
       }

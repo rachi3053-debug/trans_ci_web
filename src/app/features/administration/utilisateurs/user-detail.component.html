@@ -42,8 +42,8 @@
             </div>
             <div class="col-6">
               <div class="small text-muted mb-1">Statut</div>
-              <span class="badge" [class.text-bg-success]="user()!.actif" [class.text-bg-danger]="!user()!.actif">
-                {{ user()!.actif ? 'Actif' : 'Inactif' }}
+              <span class="badge" [class]="user()!.status === 'INVITED' ? 'text-bg-warning' : (user()!.actif ? 'text-bg-success' : 'text-bg-danger')">
+                {{ user()!.status === 'INVITED' ? 'Invité' : (user()!.actif ? 'Actif' : 'Inactif') }}
               </span>
             </div>
             <div class="col-6">
@@ -73,15 +73,15 @@
             <form [formGroup]="editForm" (ngSubmit)="onSave()">
               <div class="row g-3">
                 <div class="col-md-6">
-                  <label class="form-label" for="edit-nom">Nom</label>
+                  <label class="form-label" for="edit-nom">Nom <span class="text-danger">*</span></label>
                   <input id="edit-nom" class="form-control" formControlName="nom" />
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label" for="edit-prenom">Prénom</label>
+                  <label class="form-label" for="edit-prenom">Prénom <span class="text-danger">*</span></label>
                   <input id="edit-prenom" class="form-control" formControlName="prenom" />
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label" for="edit-email">Email</label>
+                  <label class="form-label" for="edit-email">Email <span class="text-danger">*</span></label>
                   <input id="edit-email" class="form-control" formControlName="email" type="email" />
                 </div>
                 <div class="col-md-6">

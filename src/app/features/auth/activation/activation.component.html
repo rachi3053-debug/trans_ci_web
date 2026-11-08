@@ -1,0 +1,124 @@
+<div class="auth-page d-flex align-items-center justify-content-center min-vh-100 p-3">
+  <div class="card auth-card border-0 shadow-sm">
+    <div class="card-body p-4 p-md-5">
+      <div class="text-center mb-4">
+        <a routerLink="/" class="d-inline-block mb-3" aria-label="Retour à l'accueil">
+          <img src="assets/images/logotoggle.png" alt="TransCI" class="auth-logo" />
+        </a>
+        <h1 class="h4 fw-bold mb-1">Activation de compte</h1>
+        <p class="text-muted mb-0">Définissez votre mot de passe pour accéder à TransCI</p>
+      </div>
+
+      @if (validating()) {
+        <div class="text-center py-4">
+          <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          Vérification de l'invitation…
+        </div>
+      }
+
+      @if (!validating() && !valid()) {
+        <div class="alert alert-danger d-flex align-items-center gap-2 py-2" role="alert">
+          <i class="bi bi-exclamation-triangle"></i>
+          <span>{{ invalidMessage() }}</span>
+        </div>
+        <div class="text-center">
+          <a routerLink="/login" class="btn btn-link">Retour à la connexion</a>
+        </div>
+      }
+
+      @if (!validating() && valid()) {
+        @if (email()) {
+          <div class="alert alert-success d-flex align-items-center gap-2 py-2" role="alert">
+            <i class="bi bi-check-circle"></i>
+            <span>Invitation valide pour <strong>{{ email() }}</strong>.</span>
+          </div>
+        }
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+          <div class="mb-3">
+            <label for="password" class="form-label">Mot de passe</label>
+            <div class="input-group">
+              <input
+                id="password"
+                [type]="hidePassword() ? 'password' : 'text'"
+                class="form-control"
+                [class.is-invalid]="form.controls.password.touched && form.controls.password.invalid"
+                formControlName="password"
+                placeholder="••••••••"
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                (click)="togglePasswordVisibility()"
+                [attr.aria-label]="hidePassword() ? 'Afficher le mot de passe' : 'Masquer le mot de passe'"
+              >
+                @if (hidePassword()) {
+                  <i class="bi bi-eye-slash"></i>
+                } @else {
+                  <i class="bi bi-eye"></i>
+                }
+              </button>
+            </div>
+            @if (form.controls.password.hasError('required') && form.controls.password.touched) {
+              <div class="invalid-feedback d-block">Le mot de passe est requis</div>
+            }
+            @if (form.controls.password.hasError('minlength') && form.controls.password.touched) {
+              <div class="invalid-feedback d-block">8 caractères minimum</div>
+            }
+            @if (form.controls.password.hasError('pattern') && form.controls.password.touched) {
+              <div class="invalid-feedback d-block">
+                Une minuscule, une majuscule et un chiffre sont requis
+              </div>
+            }
+          </div>
+
+          <div class="mb-3">
+            <label for="confirmPassword" class="form-label">Confirmation du mot de passe</label>
+            <div class="input-group">
+              <input
+                id="confirmPassword"
+                [type]="hideConfirm() ? 'password' : 'text'"
+                class="form-control"
+                [class.is-invalid]="form.controls.confirmPassword.touched && (form.controls.confirmPassword.invalid || form.controls.confirmPassword.hasError('passwordMismatch'))"
+                formControlName="confirmPassword"
+                placeholder="••••••••"
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                (click)="toggleConfirmVisibility()"
+                [attr.aria-label]="hideConfirm() ? 'Afficher le mot de passe' : 'Masquer le mot de passe'"
+              >
+                @if (hideConfirm()) {
+                  <i class="bi bi-eye-slash"></i>
+                } @else {
+                  <i class="bi bi-eye"></i>
+                }
+              </button>
+            </div>
+            @if (form.controls.confirmPassword.hasError('required') && form.controls.confirmPassword.touched) {
+              <div class="invalid-feedback d-block">La confirmation est requise</div>
+            }
+            @if (form.controls.confirmPassword.hasError('passwordMismatch') && form.controls.confirmPassword.touched) {
+              <div class="invalid-feedback d-block">Les mots de passe ne correspondent pas</div>
+            }
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100" [disabled]="submitted()">
+            @if (submitted()) {
+              <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+              Activation en cours…
+            } @else {
+              <i class="bi bi-check-circle me-2"></i>
+              Activer mon compte
+            }
+          </button>
+        </form>
+      }
+
+      <p class="auth-footer mt-4 mb-0">TransCI — Plateforme de gestion de transport interurbain</p>
+    </div>
+  </div>
+</div>
